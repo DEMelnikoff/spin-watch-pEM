@@ -5,9 +5,11 @@ const exp = (function() {
 
     var p = {};
 
-    const condition = 0;
+    const condition = 1;
 
     const play = ["play", "watch"][condition];
+
+    const doingOrWatching = ["doing", "watching"][condition];
 
     const playBool = [true, false][condition];
 
@@ -330,7 +332,7 @@ const exp = (function() {
     const flowMeasure = {
         type: jsPsychSurveyLikert,
         questions: [
-            {prompt: `How <b>immersed</b> and <b>engaged</b> did you feel in the last round of Wheel of Fortune?`,
+            {prompt: `During the last round of Wheel of Fortune,<br>how <b>immersed</b> and <b>engaged</b> did you feel in what you were ${doingOrWatching}?`,
             name: `flow`,
             labels: ['0<br>A little', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10<br>Extremely']},
         ],
