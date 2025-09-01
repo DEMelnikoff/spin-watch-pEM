@@ -5,7 +5,7 @@ const exp = (function() {
 
     var p = {};
 
-    const condition = 0;
+    const condition = Math.floor(Math.random()*2);
 
     const play = ["play", "watch"][condition];
 
