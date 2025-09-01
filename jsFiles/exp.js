@@ -253,6 +253,8 @@ const exp = (function() {
         Object.keys(wedgesObj).forEach((key, i) => { wedgesObj[key].color = shuffledColors[i] });
     };
 
+    shuffleColorsInPlace(wedges);
+
     // define each wheel
     const wheels = [
 
@@ -270,12 +272,12 @@ const exp = (function() {
 
         ];
 
+
     let round = 1;  // track current round
 
     const spin = {
         type: jsPsychCanvasButtonResponse,
         stimulus: function(c, spinnerData) {
-            //shuffleColorsInPlace(wedges);
             createSpinner(c, spinnerData, jsPsych.timelineVariable('sectors'), playBool);
         },
         canvas_size: [500, 500],
