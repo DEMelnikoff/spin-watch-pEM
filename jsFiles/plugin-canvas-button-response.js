@@ -76,17 +76,13 @@ var jsPsychCanvasButtonResponse = (function (jspsych) {
       trial(display_element, trial) {
           // create canvas
           var html = 
-              '<div class="score-board">' +
-                '<div class="score-board-title">Total Tokens</div>' +
-                '<div class="score-board-score" id="score" >' + trial.score + '</div>' +
-              '</div>' +
               '<div id="jspsych-canvas-button-response-stimulus">' +
                 '<canvas id="jspsych-canvas-stimulus" height="' +
                 trial.canvas_size[0] +
                 '" width="' +
                 trial.canvas_size[1] +
                 '"></canvas>' +
-                '<div id="spinUp"></div>' +
+                '<div class="pointUp", id="spinUp"></div>' +
               "</div>";
 
           //show prompt if there is one
@@ -100,9 +96,9 @@ var jsPsychCanvasButtonResponse = (function (jspsych) {
 
           // store data
           let spinnerData = {
-            outcomes_wedges: [],
-            outcomes_points: [],
-            score: 0,
+            outcome_wedge: null,
+            outcome_points: null,
+            outcome_color: null,
             rt: null,
           };
           trial.stimulus(c, spinnerData);
@@ -116,9 +112,9 @@ var jsPsychCanvasButtonResponse = (function (jspsych) {
               this.jsPsych.pluginAPI.clearAllTimeouts();
               // gather the data to store for the trial
               var trial_data = {
-                  outcomes_wedges: spinnerData.outcomes_wedges,
-                  outcomes_points: spinnerData.outcomes_points,
-                  score: spinnerData.score,
+                  outcome_wedge: spinnerData.outcome_wedge,
+                  outcome_points: spinnerData.outcome_points,
+                  outcome_color: spinnerData.outcome_color,
                   rt: spinnerData.rt,
               };
               // clear the display
@@ -148,9 +144,9 @@ var jsPsychCanvasButtonResponse = (function (jspsych) {
           }
           // end trial
           const waitForEnd = setInterval(function() {
-            if(spinnerData.outcomes_points.length >= 12) {
+            if (spinnerData.outcome_points) {
               clearInterval(waitForEnd);
-              setTimeout(after_response, 1250);
+              setTimeout(after_response, 1750);
             }
           }, 100);
           // hide image if timing is set

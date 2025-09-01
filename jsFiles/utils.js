@@ -46,33 +46,45 @@ const getTotalErrors = (data, correctAnswers) => {
     return totalErrors;
 };
 
-const createSpinner = function(canvas, spinnerData, score, sectors, reliability, label, lose, interactive) {
+const createSpinner = function(canvas, spinnerData, sectors, interactive) {
 
   /* get context */
   const ctx = canvas.getContext("2d"); 
 
-  /* pointer variables */
-  const directions = ["pointUp", "pointRight", "pointDown", "pointLeft"];
-  const direction_idxs = jsPsych.randomization.repeat([0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3], 1);
+  /* --- NEW: helpers for multi-number wedges --- */
 
-  /* flip variables */
-  const nFlips = 12 * reliability;
-  let flip_array = Array(nFlips).fill(0).concat(Array(12-nFlips).fill(1));
-  flip_array = jsPsych.randomization.repeat(flip_array, 1);
-  const flipFunc = function(arr, n) {
-    const filteredArr = arr.filter((_, index) => index !== n);
-    const randomIndex = Math.floor(Math.random() * filteredArr.length);
-    return filteredArr[randomIndex];
-  }
+  const sampleOne = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-  /* get pointer */
-  let pointer = document.querySelector("#spinUp");
-  let direction_idx = direction_idxs.pop();
-  pointer.className = directions[direction_idx];
-  pointer.innerHTML = label;
+const drawWedgeLabel = (w, highlight) => {
+  const pts = w.points;
+  const text = pts.length ? pts.join(", ") : "";
 
-  /* get score message */
-  const scoreMsg = document.getElementById("score");
+  ctx.textAlign = "center";
+  ctx.strokeStyle = "black";
+  ctx.lineWidth = 3;
+  ctx.fillStyle = "#fff";
+
+  // Try a base font size, shrink until it fits the wedge chord
+  const base = highlight ? 90 : 65;
+  let fontSize = base;
+
+  // Rough max usable width along the wedge at near the text radius
+  // chord length ≈ 2 * r * sin(theta/2); we take a generous fraction of that
+  const chord = 2 * (rad - 40) * Math.sin(arc / 2);
+  const maxWidth = 0.85 * chord;
+
+  // Downsize font until it fits (with a sensible lower bound)
+  do {
+    ctx.font = `${highlight ? "bolder" : "bold"} ${fontSize}px sans-serif`;
+    if (ctx.measureText(text).width <= maxWidth || fontSize <= 28) break;
+    fontSize -= 2;
+  } while (fontSize > 20);
+
+  // Draw once, centered; keep your existing y-offset so layout stays familiar
+  const y = -140;
+  ctx.strokeText(text, 0, y);
+  ctx.fillText(text, 0, y);
+};
 
   /* get wheel properties */
   let wheelWidth = canvas.getBoundingClientRect()['width'];
@@ -103,7 +115,6 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reliability,
   let currentAngle = null;     // wheel angle after last perturbation
   let onWheel = false;         // true when cursor is on wheel, false otherwise
   let spin_num = 5             // number of spins
-  let liveSectorLabel;
   let direction;
   let animId = null;          // current requestAnimationFrame handle
 
@@ -161,9 +172,6 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reliability,
         isAccelerating = true;
         isSpinning = true;
         angVelMax = rand(25, 50);
-        if (lose) {
-          speed = (direction == 1) ? Math.min(speed, 25) : Math.max(speed, -25);
-        };
         giveMoment(speed)
       };
     };   
@@ -179,26 +187,16 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reliability,
       const deltaTime = (timestamp - lastTimestamp) / 1000; // seconds
       lastTimestamp = timestamp;
 
-      // stop accelerating when max speed is reached
-      if (lose) {
-        if (Math.abs(speed) >= loseSpeed && liveSectorLabel == "L") isAccelerating = false;
-      } else {
-        if (Math.abs(speed) >= angVelMax) isAccelerating = false;
-      }
+
+      if (Math.abs(speed) >= angVelMax) isAccelerating = false;
 
       let liveSector = sectors[getIndex(oldAngle)];
-      liveSectorLabel = liveSector.label;
       oldAngle_corrected = (oldAngle < 0) ? 360 + (oldAngle % 360) : oldAngle % 360;
-
 
       // accelerate
       if (isAccelerating) {
         let growthRate = Math.log(1.06) * 60;
-        if (lose) {
-          speed = (direction === 1) ? Math.min(speed * Math.exp(growthRate * deltaTime), loseSpeed) : Math.max(speed * Math.exp(growthRate * deltaTime), -loseSpeed);        
-        } else {
-          speed *= Math.exp(growthRate * deltaTime);
-        };
+        speed *= Math.exp(growthRate * deltaTime);
         animId = requestAnimationFrame(step);
         oldAngle += speed * deltaTime * 60;
         lastAngles.shift();
@@ -212,13 +210,7 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reliability,
         isAccelerating = false;
         speed *= Math.exp(decayRate * deltaTime); // Exponential decay
         animId = requestAnimationFrame(step);
-        if ( (Math.abs(speed) > angVelMin * .2) || (Math.abs(speed) > angVelMin * .08 && oldAngle_corrected < 290) || (Math.abs(speed) > angVelMin * .08 && oldAngle_corrected > 340) ) {
-          oldAngle += speed * deltaTime * 60;
-          lastAngles.shift();
-          lastAngles.push(oldAngle);
-          render(oldAngle);  
-        } else if (!lose && Math.abs(speed) > angVelMin * .1) {
-          // decelerate
+        if (Math.abs(speed) > angVelMin * .1) {
           oldAngle += speed * deltaTime * 60;
           lastAngles.shift();
           lastAngles.push(oldAngle);
@@ -231,18 +223,18 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reliability,
             animId = null;
           };
           currentAngle = oldAngle;
-          flip = flip_array.pop();
-          let sectorIdx_real = getIndex() + direction_idx;
-          sectorIdx_real = (sectorIdx_real < 4) ? sectorIdx_real : sectorIdx_real % 4;
-          let sectorIdx_mod = flip == 0 ? sectorIdx_real : flipFunc([0, 1, 2, 3], sectorIdx_real);
-          let sector = sectors[sectorIdx_mod];
-          let points = sector.points;
-          let sector_real = sectors[sectorIdx_real];
-          let points_real = sector_real.points;
-          spinnerData.outcomes_points.push(points);
-          spinnerData.outcomes_wedges.push(points_real);
-          drawSector(sectors, sectorIdx_mod, points);
-          updateScore(points, "black");
+          let sectorIdx_real = getIndex();
+          let sector = sectors[sectorIdx_real];
+          let points;
+          if (sector.points.length > 1) {
+            points = sampleOne(sector.points);
+          } else {
+            points = sector.points[0]
+          }
+          spinnerData.outcome_points = points;
+          spinnerData.outcome_wedge = sector.label;
+          spinnerData.outcome_color = sector.color;
+          drawSector(sectors, sectorIdx_real, points);
         };
       };
     };
@@ -251,22 +243,6 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reliability,
 
   /* generate random float in range min-max */
   const rand = (m, M) => Math.random() * (M - m) + m;
-
-  const updateScore = (points, color) => {
-    score += points;
-    spinnerData.score = score;
-    scoreMsg.innerHTML = `<span style="color:${color}; font-weight: bolder">${score}</span>`;
-    setTimeout(() => {
-      scoreMsg.innerHTML = `${score}`
-      isSpinning = (spinnerData.outcomes_points.length >= 12) ? true : false;
-      drawSector(sectors, null);
-      direction_idx = (spinnerData.outcomes_points.length >= 12) ? direction_idx : direction_idxs.pop();
-      pointer.className = directions[direction_idx];
-      pointer.innerHTML = label;
-      onWheel ? canvas.style.cursor = "grab" : canvas.style.cursor = "";
-      if (!interactive && spinnerData.outcomes_points.length < 12) { setTimeout(startAutoSpin, 1000) };
-    }, 1250);
-  };
 
   const getIndex = () => {
     let normAngle = 0;
@@ -282,93 +258,27 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reliability,
     return sector
   }
 
-  const textUnderline = function(ctx, text, x, y, color, textSize, align){
-
-    //Get the width of the text
-    var textWidth = ctx.measureText(text).width;
-
-    //var to store the starting position of text (X-axis)
-    var startX;
-
-    //var to store the starting position of text (Y-axis)
-    // I have tried to set the position of the underline according 
-    // to size of text. You can change as per your need
-    var startY = y+(parseInt(textSize)/10);
-
-    //var to store the end position of text (X-axis)
-    var endX;
-
-    //var to store the end position of text (Y-axis)
-    //It should be the same as start position vertically. 
-    var endY = startY;
-
-    //To set the size line which is to be drawn as underline.
-    //Its set as per the size of the text. Feel free to change as per need.
-    var underlineHeight = parseInt(textSize)/15;
-
-    //Because of the above calculation we might get the value less 
-    //than 1 and then the underline will not be rendered. this is to make sure 
-    //there is some value for line width.
-    if(underlineHeight < 1){
-      underlineHeight = 1;
-    }
-
-    ctx.beginPath();
-    if(align == "center"){
-      startX = x - (textWidth/2);
-      endX = x + (textWidth/2);
-    }else if(align == "right"){
-      startX = x-textWidth;
-      endX = x;
-    }else{
-      startX = x;
-      endX = x + textWidth;
-    }
-
-    ctx.strokeStyle = color;
-    ctx.lineWidth = underlineHeight;
-    ctx.moveTo(startX,startY);
-    ctx.lineTo(endX,endY);
-    ctx.stroke();
-  }
-
   //* Draw sectors and prizes texts to canvas */
-  const drawSector = (sectors, sector) => {
+  const drawSector = (sectors, sector, chosenPayout) => {
     for (let i = 0; i < sectors.length; i++) {
       const ang = arc * i;
       ctx.save();
-      // COLOR
+
+      // fill
       ctx.beginPath();
-      ctx.fillStyle = (isSpinning && i == sector) ? "black" : sectors[i].color;
+      ctx.fillStyle = sectors[i].color;
       ctx.moveTo(rad, rad);
       ctx.arc(rad, rad, rad, ang, ang + arc);
       ctx.lineTo(rad, rad);
       ctx.fill();
-      // TEXT
+
+      // text
       ctx.translate(rad, rad);
-      let rotation = (arc/2) * (1 + 2*i) + Math.PI/2
-      ctx.rotate( rotation );
+      const rotation = (arc/2) * (1 + 2*i) + Math.PI/2;
+      ctx.rotate(rotation);
 
-
-      //ctx.rotate( (ang + arc / 2) + arc );
-      ctx.textAlign = "center";
-      ctx.fillStyle = "#fff";
-      if (isSpinning && i == sector) {
-        ctx.font = "bolder 90px sans-serif"
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 3;
-        ctx.strokeText(sectors[i].label, 0, -140);
-        ctx.fillText(sectors[i].label, 0, -140);
-      } else {
-        ctx.font = "bold 65px sans-serif"
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 3;
-        ctx.strokeText(sectors[i].label, 0, -140);
-        ctx.fillText(sectors[i].label, 0, -140);
-      }
-     // ctx.fillText(sector.label, rad - 80, 10);
-     // textUnderline(ctx,sectors[i].label, 0, -135, "#fff", "50px", "center");
-      // RESTORE
+      const highlight = (isSpinning && i == sector);
+      drawWedgeLabel(sectors[i], highlight);
       ctx.restore();
     }
   };
