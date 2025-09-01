@@ -5,7 +5,7 @@ const exp = (function() {
 
     var p = {};
 
-    const condition = 1;
+    const condition = 0;
 
     const play = ["play", "watch"][condition];
 
@@ -221,17 +221,31 @@ const exp = (function() {
     *
     */
 
-
-
-    // define each wedge
     const wedges = {
-        one_three: {color: "#06D6A0", label: "1_3", points: [1, 3]},
-        five_seven: {color: "#EF476F", label: "5_7", points: [5, 7]},
-        one_three_five: {color: "#EF476F", label: "1_3_5", points: [1, 3, 5]},
-        one: {color: "#F4D35E", label: "1", points: [1]},
-        three: {color: "#6A9FB5", label: "3", points: [3]},
-        five: {color: "#EE964B", label: "5", points: [5]},
-        seven: {color: "#736CED", label: "7", points: [7]},
+
+      // singles
+      one:   { color:"#1F77B4", label:"1", points:[1] },   // blue
+      two:   { color:"#FF7F0E", label:"2", points:[2] },   // orange
+      three: { color:"#2CA02C", label:"3", points:[3] },   // green
+      four:  { color:"#D62728", label:"4", points:[4] },   // red
+      five:  { color:"#9467BD", label:"5", points:[5] },   // purple
+      six:   { color:"#8C564B", label:"6", points:[6] },   // brown
+      seven: { color:"#17BECF", label:"7", points:[7] },   // cyan
+      eight: { color:"#BCBD22", label:"8", points:[8] },   // olive
+      nine:  { color:"#E377C2", label:"9", points:[9] },   // pink
+
+      // pairs
+      one_three:   { color:"#00A878", label:"1_3", points:[1,3] },     // teal
+      five_seven:  { color:"#FF6F61", label:"5_7", points:[5,7] },     // coral
+      two_four:    { color:"#3A86FF", label:"2_4", points:[2,4] },     // bright blue
+      six_eight:   { color:"#F6C85F", label:"6_8", points:[6,8] },     // mustard
+      three_five:  { color:"#7F3C8D", label:"3_5", points:[3,5] },     // deep purple
+      seven_nine:  { color:"#11A579", label:"7_9", points:[7,9] },     // green-teal
+
+      // triplets
+      one_three_five:   { color:"#785EF0", label:"1_3_5", points:[1,3,5] }, // indigo
+      two_four_six:     { color:"#E71D36", label:"2_4_6", points:[2,4,6] },  // crimson
+      three_five_seven: { color:"#06D6A0", label:"3_5_7", points:[3,5,7] },  // turquoise
     };
 
     function shuffleColorsInPlace(wedgesObj) {
@@ -242,15 +256,17 @@ const exp = (function() {
     // define each wheel
     const wheels = [
 
-            {sectors: [ wedges.one_three, wedges.five_seven, wedges.one_three, wedges.five_seven ], wheel_id: 1, ev: 4, sd: 2, mi: 2},
-            {sectors: [ wedges.one_three, wedges.five_seven, wedges.one_three, wedges.five_seven ], wheel_id: 2, ev: 4, sd: 2, mi: .792},
-            {sectors: [ wedges.one_three_five, wedges.one_three_five, wedges.one_three_five, wedges.seven ], wheel_id: 3, ev: 4, sd: 2, mi: .208},
-            {sectors: [ wedges.one_three_five, wedges.one_three_five, wedges.one_three_five, wedges.seven ], wheel_id: 4, ev: 4, sd: 2, mi: 0},
+            {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ],                                   wheel_id: 1, ev: 4, sd: 2, mi: 2},
+            {sectors: [ wedges.two, wedges.four, wedges.six, wedges.eight ],                                     wheel_id: 2, ev: 5, sd: 2, mi: 2},
+            {sectors: [ wedges.three, wedges.five, wedges.seven, wedges.nine ],                                  wheel_id: 3, ev: 6, sd: 2, mi: 2},
 
-            {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ], wheel_id: 5, ev: 8, sd: 2, mi: 2},
-            {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ], wheel_id: 6, ev: 8, sd: 2, mi: .792},
-            {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ], wheel_id: 7, ev: 8, sd: 2, mi: .208},
-            {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ], wheel_id: 8, ev: 8, sd: 2, mi: 0},
+            {sectors: [ wedges.one_three, wedges.five_seven, wedges.one_three, wedges.five_seven ],              wheel_id: 4, ev: 4, sd: 2, mi: 1},
+            {sectors: [ wedges.two_four, wedges.six_eight, wedges.two_four, wedges.six_eight ],                  wheel_id: 5, ev: 5, sd: 2, mi: 1},
+            {sectors: [ wedges.three_five, wedges.seven_nine, wedges.three_five, wedges.seven_nine ],            wheel_id: 6, ev: 6, sd: 2, mi: 1},
+
+            {sectors: [ wedges.one_three_five, wedges.one_three_five, wedges.one_three_five, wedges.seven ],      wheel_id: 7, ev: 4, sd: 2, mi: .81},
+            {sectors: [ wedges.two_four_six, wedges.two_four_six, wedges.two_four_six, wedges.eight ],            wheel_id: 8, ev: 5, sd: 2, mi: .81},
+            {sectors: [ wedges.three_five_seven, wedges.three_five_seven, wedges.three_five_seven, wedges.nine ], wheel_id: 9, ev: 6, sd: 2, mi: .81},
 
         ];
 
@@ -434,6 +450,6 @@ const exp = (function() {
 
 }());
 
-const timeline = [exp.consent, exp.instLoop, exp.postIntro, exp.task, exp.demographics, exp.save_data];
+const timeline = [exp.task, exp.consent, exp.instLoop, exp.postIntro, exp.task, exp.demographics, exp.save_data];
 
 jsPsych.run(timeline);
