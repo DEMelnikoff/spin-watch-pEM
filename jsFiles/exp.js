@@ -303,7 +303,7 @@ const exp = (function() {
             `;
         },
         choices: "NO_KEYS",
-        trial_duration: 1750,
+        trial_duration: 1500,
         data: {wheel_id: jsPsych.timelineVariable('wheel_id'), ev: jsPsych.timelineVariable('ev'), sd: jsPsych.timelineVariable('sd'), mi: jsPsych.timelineVariable('mi')},
         on_finish: function(data) {
             data.round = round;
