@@ -55,36 +55,113 @@ const createSpinner = function(canvas, spinnerData, sectors, interactive) {
 
   const sampleOne = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-const drawWedgeLabel = (w, highlight) => {
-  const pts = w.points;
-  const text = pts.length ? pts.join(", ") : "";
+  const drawWedgeLabel = (w, highlight) => {
+    const vals = (Array.isArray(w.points) ? w.points : []).map(String);
+    if (!vals.length) return;
 
-  ctx.textAlign = "center";
-  ctx.strokeStyle = "black";
-  ctx.lineWidth = 3;
-  ctx.fillStyle = "#fff";
+    const count  = vals.length;                 // 1, 2, or 3
+    const weight = highlight ? "bolder" : "bold";
 
-  // Try a base font size, shrink until it fits the wedge chord
-  const base = highlight ? 90 : 65;
-  let fontSize = base;
+    // --- base font sizes (start points; fit loop still clamps) ---
+    const baseNormal    = { 1: 76,  2: 70,  3: 72 };
+    const baseHighlight = { 1: 96,  2: 90,  3: 94 };
+    let fontSize = (highlight ? baseHighlight[count] : baseNormal[count]) ?? (highlight ? 92 : 72);
 
-  // Rough max usable width along the wedge at near the text radius
-  // chord length ≈ 2 * r * sin(theta/2); we take a generous fraction of that
-  const chord = 2 * (rad - 40) * Math.sin(arc / 2);
-  const maxWidth = 0.85 * chord;
+    // --- minimum size (slightly higher for stacked so they don't collapse) ---
+    const minSize = count >= 2 ? (highlight ? 34 : 30) : 28;
 
-  // Downsize font until it fits (with a sensible lower bound)
-  do {
-    ctx.font = `${highlight ? "bolder" : "bold"} ${fontSize}px sans-serif`;
-    if (ctx.measureText(text).width <= maxWidth || fontSize <= 28) break;
-    fontSize -= 2;
-  } while (fontSize > 20);
+    // --- vertical gaps (tighter for stacked; doubles a touch looser than triples) ---
+    const gapNormal    = { 1: 0.00, 2: 0.32, 3: 0.28 };
+    const gapHighlight = { 1: 0.00, 2: 0.28, 3: 0.26 };
+    const gapRatio = (highlight ? gapHighlight[count] : gapNormal[count]) ?? (highlight ? 0.28 : 0.30);
 
-  // Draw once, centered; keep your existing y-offset so layout stays familiar
-  const y = -140;
-  ctx.strokeText(text, 0, y);
-  ctx.fillText(text, 0, y);
-};
+    const padX = 10;
+
+    // --- radial band geometry (controls vertical position & available height) ---
+    let rOuter, rInner, textRadius;
+
+    // Singles: center around ~0.60 * rad (inward from rim)
+    if (count === 1) {
+      rOuter     = 0.90 * rad;          // outer bound (keeps margin from rim)
+      rInner     = 0.30 * rad;          // inner bound
+      textRadius = 0.60 * rad;          // <-- vertical center for single numbers
+    } else {
+      // Stacked (keeps your existing behavior)
+      rOuter = 0.95 * rad;
+      rInner = (
+        count === 2 ? (highlight ? 0.30 : 0.38) :
+                      (highlight ? 0.25 : 0.32)
+      ) * rad;
+      textRadius = (rOuter + rInner) / 2; // center of band
+    }
+
+    const maxHeight = rOuter - rInner;
+
+    // Width budget uses the chord at the text radius.
+    const chord    = 2 * textRadius * Math.sin(arc / 2);
+    const maxWidth = 0.95 * chord;
+
+    // Fit loop: shrink until both width and height constraints are satisfied.
+    let widths = [];
+    let totalHeight = 0;
+    while (fontSize >= minSize) {
+      ctx.font = `${weight} ${fontSize}px sans-serif`;
+      widths = vals.map(t => ctx.measureText(t).width);
+
+      const gap = fontSize * gapRatio;
+      totalHeight = vals.length * fontSize + (vals.length - 1) * gap;
+
+      const fitsW = (Math.max(...widths) + 2 * padX) <= maxWidth;
+      const fitsH = totalHeight <= maxHeight;
+      if (fitsW && fitsH) break;
+
+      fontSize -= 2;
+    }
+
+    // --- draw ---
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";                      // easier vertical centering
+    ctx.fillStyle = "#fff";
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = Math.max(2, 3 * (fontSize / 64));
+
+    const gap  = fontSize * gapRatio;
+    const step = fontSize + gap;
+
+    // centers the whole block around -textRadius (negative y = outward)
+    const firstY = -textRadius - 0.5 * (vals.length - 1) * step;
+
+    // divider lines between rows
+    if (vals.length > 1) {
+      for (let i = 0; i < vals.length - 1; i++) {
+        const y1 = firstY + i * step;
+        const y2 = firstY + (i + 1) * step;
+        const yMid = (y1 + y2) / 2;
+
+        const adjHalf = Math.min(maxWidth / 2, Math.max(widths[i], widths[i + 1]) / 2 + padX);
+
+        ctx.save();
+        ctx.lineCap = "round";
+        // dark under-stroke
+        ctx.strokeStyle = "rgba(0,0,0,0.7)";
+        ctx.lineWidth = Math.max(4, 4 * (fontSize / 64));
+        ctx.beginPath(); ctx.moveTo(-adjHalf, yMid); ctx.lineTo(adjHalf, yMid); ctx.stroke();
+        // light top-stroke
+        ctx.strokeStyle = "rgba(255,255,255,0.95)";
+        ctx.lineWidth = Math.max(2, 2 * (fontSize / 64));
+        ctx.beginPath(); ctx.moveTo(-adjHalf, yMid); ctx.lineTo(adjHalf, yMid); ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    // numbers
+    for (let i = 0; i < vals.length; i++) {
+      const y = firstY + i * step;
+      ctx.font = `${weight} ${fontSize}px sans-serif`;
+      ctx.strokeText(vals[i], 0, y);
+      ctx.fillText(vals[i], 0, y);
+    }
+  };
 
   /* get wheel properties */
   let wheelWidth = canvas.getBoundingClientRect()['width'];
@@ -234,7 +311,7 @@ const drawWedgeLabel = (w, highlight) => {
           spinnerData.outcome_points = points;
           spinnerData.outcome_wedge = sector.label;
           spinnerData.outcome_color = sector.color;
-          drawSector(sectors, sectorIdx_real, points);
+          drawSector(sectors, sectorIdx_real);
         };
       };
     };
@@ -259,7 +336,7 @@ const drawWedgeLabel = (w, highlight) => {
   }
 
   //* Draw sectors and prizes texts to canvas */
-  const drawSector = (sectors, sector, chosenPayout) => {
+  const drawSector = (sectors, sector) => {
     for (let i = 0; i < sectors.length; i++) {
       const ang = arc * i;
       ctx.save();

@@ -640,8 +640,9 @@
   top: 50%;
   left: 50%;
   width: 14%;
-  height: 14%;
-  margin: -7%;
+  height: 8%;
+  margin-top: -4%;
+  margin-left: -7%;
   color: white;
   background: white;
   box-shadow: 0 0 0 4px white, 0 0px 15px 5px rgba(0, 0, 0, 0.6);
@@ -655,7 +656,7 @@
   content: '';
   position: absolute;
   top: -36px;
-  border: 35px solid transparent;
+  border: 38px solid transparent;
   border-bottom-color: white;
   border-top: none;
 }

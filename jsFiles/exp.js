@@ -82,12 +82,12 @@ const exp = (function() {
             </div>`,
 
             `<div class='parent'>
-                <p>In this example, you'd have an equal chance of receiving 5 or 7 tokens.</p>
+                <p>In this example, you'd have an equal chance of receiving 3 or 5 tokens.</p>
                 <img src="./img/mediumMI-activated.png" style="width:50%; height:50%">
             </div>`,
 
             `<div class='parent'>
-                <p>In this example, you'd have an equal chance of receiving 1, 3, or 5 tokens.</p>
+                <p>In this example, you'd have an equal chance of receiving 2, 4, or 6 tokens.</p>
                 <img src="./img/lowMI-activated.png" style="width:50%; height:50%">
             </div>`,
         ],
