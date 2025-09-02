@@ -59,6 +59,13 @@ var jsPsychCanvasButtonResponse = (function (jspsych) {
               pretty_name: "Score",
               default: 0,
           },
+          /** Current round. */
+          round: {
+              type: jspsych.ParameterType.INT,
+              pretty_name: "Round",
+              default: 0,
+          },
+
       },
   };
   /**

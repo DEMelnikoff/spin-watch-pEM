@@ -100,14 +100,15 @@ const exp = (function() {
             </div>`,
 
             `<div class='parent'>
-                <p>Throughout Wheel of Fortune, you'll answer questions about your feelings.</p>
-                <p>Specifically, you'll report how <strong>immersed and engaged</strong> you feel while spinning each wheel,
+                <p>You'll complete 9 rounds of Wheel of Fortune.</p>
+                <p>Each round will feature a different wheel.</p>
+                <p>After each round, you'll answer questions about your feelings: You'll report how <strong>immersed and engaged</strong> you felt during the last round,
                 as well as how <strong>happy</strong> you currently feel.</p>
-            </div>`,      
+            </div>`,     
 
             `<div class='parent'>
                 <p>You're ready to start playing Wheel of Fortune!</p>
-                <p>Continue to the next screen to begin.</p>
+                <p>Continue to the next screen to begin Round 1.</p>
             </div>`,      
         ],
 
@@ -119,15 +120,16 @@ const exp = (function() {
             </div>`,
 
             `<div class='parent'>
-                <p>Throughout Wheel of Fortune, you'll answer questions about your feelings.</p>
-                <p>Specifically, you'll report how <strong>immersed and engaged</strong> you feel during each round of Wheel of Fortune,
+                <p>You'll complete 9 rounds of Wheel of Fortune.</p>
+                <p>Each round will feature a different wheel.</p>
+                <p>After each round, you'll answer questions about your feelings: You'll report how <strong>immersed and engaged</strong> you felt during the last round,
                 as well as how <strong>happy</strong> you currently feel.</p>
-            </div>`,      
+            </div>`,            
 
             `<div class='parent'>
                 <p>You're ready to start playing Wheel of Fortune!</p>
-                <p>Continue to the next screen to begin.</p>
-            </div>`,      
+                <p>Continue to the next screen to begin Round 1.</p>
+            </div>`,        
         ],
 
         postTask: [
@@ -275,6 +277,26 @@ const exp = (function() {
 
     let round = 1;  // track current round
 
+    function ensureRoundHeader() {
+      let el = document.getElementById("round-header");
+      if (!el) {
+        el = document.createElement("div");
+        el.id = "round-header";
+        document.body.appendChild(el);
+      }
+      return el;
+    }
+
+    function setRoundHeader(roundNumber) {
+      const el = ensureRoundHeader();
+      el.textContent = `Round ${roundNumber}`;
+    }
+
+    function removeRoundHeader() {
+      const el = document.getElementById("round-header");
+      if (el) el.remove();
+    }
+
     const spin = {
         type: jsPsychCanvasButtonResponse,
         stimulus: function(c, spinnerData) {
@@ -282,9 +304,12 @@ const exp = (function() {
         },
         canvas_size: [500, 500],
         data: {wheel_id: jsPsych.timelineVariable('wheel_id'), ev: jsPsych.timelineVariable('ev'), sd: jsPsych.timelineVariable('sd'), mi: jsPsych.timelineVariable('mi')},
+        on_start: function() {
+            setRoundHeader(round);
+        },
         on_finish: function(data) {
             data.round = round;
-        }
+        },
     };
 
     const feedback = {
@@ -305,6 +330,9 @@ const exp = (function() {
         choices: "NO_KEYS",
         trial_duration: 1500,
         data: {wheel_id: jsPsych.timelineVariable('wheel_id'), ev: jsPsych.timelineVariable('ev'), sd: jsPsych.timelineVariable('sd'), mi: jsPsych.timelineVariable('mi')},
+        on_start: function() {
+            setRoundHeader(round);
+        },
         on_finish: function(data) {
             data.round = round;
         }
@@ -313,20 +341,24 @@ const exp = (function() {
     // trial: flow DV
     const flowMeasure = {
         type: jsPsychSurveyLikert,
-        questions: [
-            {prompt: `During the last round of Wheel of Fortune,<br>how <b>immersed</b> and <b>engaged</b> did you feel in what you were ${doingOrWatching}?`,
-            name: `flow`,
-            labels: ['0<br>A little', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10<br>Extremely']},
-        ],
+        questions: function () {
+            let flow_question = [
+                {prompt: `During Round ${round} of Wheel of Fortune,<br>how <b>immersed</b> and <b>engaged</b> did you feel in what you were ${doingOrWatching}?`,
+                name: `flow`,
+                labels: ['0<br>A little', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10<br>Extremely']},
+            ];
+            return flow_question;
+        },
         randomize_question_order: false,
         scale_width: 600,
         data: {wheel_id: jsPsych.timelineVariable('wheel_id'), ev: jsPsych.timelineVariable('ev'), sd: jsPsych.timelineVariable('sd'), mi: jsPsych.timelineVariable('mi')},
         on_finish: function(data) {
             data.round = round;
-            let scoreArray = jsPsych.data.get().select('score').values;
-            let outcomesArray = jsPsych.data.get().select('outcomes').values;
             saveSurveyData(data);
-        }
+        },
+        on_start: function() {
+            removeRoundHeader();
+        },
     };
 
     const happinessMeasure = {
@@ -342,8 +374,6 @@ const exp = (function() {
         data: {wheel_id: jsPsych.timelineVariable('wheel_id'), ev: jsPsych.timelineVariable('ev'), sd: jsPsych.timelineVariable('sd'), mi: jsPsych.timelineVariable('mi')},
         on_finish: (data) => {
             data.round = round;
-            let scoreArray = jsPsych.data.get().select('score').values;
-            let outcomesArray = jsPsych.data.get().select('outcomes').values;
             saveSurveyData(data);
             round++;
         },
@@ -439,7 +469,7 @@ const exp = (function() {
     p.save_data = {
         type: jsPsychPipe,
         action: "save",
-        experiment_id: "HxoyN23667SA",
+        experiment_id: "NXMAEMz1iFFW",
         filename: filename,
         data_string: ()=>jsPsych.data.get().csv()
     };
