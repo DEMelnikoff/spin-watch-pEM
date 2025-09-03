@@ -56,34 +56,44 @@ const exp = (function() {
             </div>`,
 
             `<div class='parent'>
+                <p>The value of each color is displayed below the wheel.</p>
+                <img src="./img/highMI.png" style="width:50%; height:50%">
+            </div>`,
+
+            `<div class='parent'>
                 <p>After a wheel stops spinning, you'll see how many tokens you won.</p>
                 <img src="./img/highMI.png" style="width:50%; height:50%">
             </div>`,
 
             `<div class='parent'>
-                <p>For example, if a wheel lands on a 3...</p>
+                <p>For example, if this wheel landed on pink...</p>
                 <img src="./img/highMI-activated.png" style="width:50%; height:50%">
             </div>`,
 
             `<div class='parent'>
-                <p>...you'll see that you received 3 tokens.</p>
+                <p>...you'd receive 6 tokens.</p>
                 <img src="./img/outcome.png" style="width:50%; height:50%">
             </div>`,
 
             `<div class='parent'>
-                <p>Some wedges have multiple numbers, like this:</p>
+                <p>Some colors have multiple values.</p>
                 <img src="./img/mediumMI.png" style="width:50%; height:50%">
             </div>`,
 
             `<div class='parent'>
-                <p>If the wheel lands on a wedge with multiple numbers, one number is randomly selected.</p>
+                <p>If a wheel lands on a wedge with multiple values, one value is randomly selected.</p>
                 <p>You then receive that many tokens.</p>
                 <img src="./img/mediumMI.png" style="width:50%; height:50%">
             </div>`,
 
             `<div class='parent'>
-                <p>In this example, you'd have an equal chance of receiving 3 or 5 tokens.</p>
+                <p>In this example, you'd have an equal chance of receiving 1 or 3 tokens.</p>
                 <img src="./img/mediumMI-activated.png" style="width:50%; height:50%">
+            </div>`,
+
+            `<div class='parent'>
+                <p>In this example, you'd have an equal chance of receiving 5 or 7 tokens.</p>
+                <img src="./img/mediumMI-activated2.png" style="width:50%; height:50%">
             </div>`,
 
             `<div class='parent'>
@@ -170,17 +180,17 @@ const exp = (function() {
             </div>`,
         questions: [
             {
-                prompt: `What happens if a wheel lands on a wedge with only a 5?`, 
+                prompt: `What happens if a wheel lands on a wedge with 5?`, 
                 name: `attnChk1`, 
                 options: ["I'll definitely receive 5 tokens.", "I'll randomly receive 5 or 7 tokens.", "I'll randomly receive 3, 5, or 7 tokens."],
             },
             {
-                prompt: `What happens if a wheel lands on a wedge with a 5 and 7?`, 
+                prompt: `What happens if a wheel lands on a wedge worth 5 or 7?`, 
                 name: `attnChk2`, 
                 options: ["I'll definitely receive 5 tokens.", "I'll randomly receive 5 or 7 tokens.", "I'll randomly receive 3, 5, or 7 tokens."],
             },
             {
-                prompt: `What happens if a wheel lands on a wedge with a 3, 5, and 7?`, 
+                prompt: `What happens if a wheel lands on a wedge worth 3, 5, or 7?`, 
                 name: `attnCh3`, 
                 options: ["I'll definitely receive 5 tokens.", "I'll randomly receive 5 or 7 tokens.", "I'll randomly receive 3, 5, or 7 tokens."],
             },
