@@ -51,84 +51,81 @@ const createSpinner = function(canvas, spinnerData, sectors, interactive) {
   /* get context */
   const ctx = canvas.getContext("2d"); 
 
+  // Decide black/white text for contrast on a given bg color
+  function contrastTextColor(hex) {
+    // expect "#rrggbb"
+    const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    if (!m) return "#000";
+    const r = parseInt(m[1], 16), g = parseInt(m[2], 16), b = parseInt(m[3], 16);
+    // relative luminance (sRGB)
+    const L = (v) => {
+      v /= 255;
+      return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4);
+    };
+    const Y = 0.2126*L(r) + 0.7152*L(g) + 0.0722*L(b);
+    return Y > 0.45 ? "#000" : "#fff";
+  }
+
+  // Group values by color; supports single value or array of values per sector
+  function legendGroupsFromSectors(sectors) {
+    const map = new Map();
+    for (const s of sectors) {
+      const col = s.color;
+      const vals = Array.isArray(s.points) ? s.points : [s.points];
+      if (!map.has(col)) map.set(col, new Set());
+      const set = map.get(col);
+      vals.forEach(v => set.add(v));
+    }
+    // return [{color, values:[...sorted]}]
+    return Array.from(map.entries()).map(([color, set]) => ({
+      color,
+      values: Array.from(set).sort((a,b)=>a-b)
+    }));
+  }
+
+  function ensureLegendContainer() {
+    let el = document.getElementById("wheel-legend");
+    if (!el) {
+      const host = document.getElementById("jspsych-canvas-button-response-stimulus");
+      if (host) {
+        host.insertAdjacentHTML("beforeend", '<div id="wheel-legend" class="wheel-legend"></div>');
+        el = document.getElementById("wheel-legend");
+      }
+    }
+    return el;
+  }
+
+  function renderLegend(sectors) {
+    const container = ensureLegendContainer();
+    if (!container) return;
+    const groups = legendGroupsFromSectors(sectors);
+
+    container.innerHTML = groups.map(g => {
+      const text = g.values.join(" / "); // show all values sharing this color
+      const fg = contrastTextColor(g.color);
+      return `
+        <div class="legend-item" data-color="${g.color}"
+             style="background:${g.color}; color:${fg};">
+          ${text}
+        </div>
+      `;
+    }).join("");
+  }
+
+  function highlightLegendByColor(color) {
+    const items = document.querySelectorAll("#wheel-legend .legend-item");
+    items.forEach(it => {
+      if (it.getAttribute("data-color") === color) {
+        it.classList.add("active");
+      } else {
+        it.classList.remove("active");
+      }
+    });
+  }
+
   /* --- NEW: helpers for multi-number wedges --- */
 
   const sampleOne = (arr) => arr[Math.floor(Math.random() * arr.length)];
-
-  const drawWedgeLabel = (w, highlight) => {
-    const vals = Array.isArray(w.points) ? w.points.map(String) : [];
-    if (!vals.length) return;
-
-    // ---- only tweak these if you want ----
-    const LABEL_FONT_PX   = 42;   // base font for all wedges
-    const HIGHLIGHT_SCALE = 1.15; // multiplier on winning/highlighted wedge
-
-    // ---- fixed layout constants (you don't need to touch these) ----
-    const GAP_EM         = 0.2;  // vertical gap as fraction of font
-    const R_OUTER_FRAC   = 0.92;  // outer bound of text band (as % of radius)
-    const R_INNER_FRAC   = 0.34;  // inner bound of text band (as % of radius)
-    const LINE_PAD       = 12;    // extra px beyond text width for divider length
-    const LINE_MID_K     = 0.33;  // 0.5=center; smaller moves line closer to text
-    const MAX_WIDTH_FRAC = 0.95;  // clamp width to this fraction of chord
-
-    // uniform font size (same for singles/doubles/triples)
-    let fontSize = LABEL_FONT_PX * (highlight ? HIGHLIGHT_SCALE : 1);
-    const weight = highlight ? "bolder" : "bold";
-
-    // radial band and width/height budgets
-    const rOuter     = R_OUTER_FRAC * rad;
-    const rInner     = R_INNER_FRAC * rad;
-    const textRadius = (rOuter + rInner) / 2;
-    const maxHeight  = rOuter - rInner;
-
-    const chord    = 2 * textRadius * Math.sin(arc / 2);
-    const maxWidth = MAX_WIDTH_FRAC * chord;
-
-    // set font & measure once
-    ctx.font = `${weight} ${fontSize}px sans-serif`;
-    let widths = vals.map(t => ctx.measureText(t).width);
-
-    // layout
-    const gap  = fontSize * GAP_EM;
-    const step = fontSize + gap;
-
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillStyle = "#fff";
-    ctx.strokeStyle = "black";
-    ctx.lineWidth = Math.max(2, 3 * (fontSize / 64));
-
-    // center block in the band (negative y = outward from center)
-    const firstY = -textRadius - 0.5 * (vals.length - 1) * step;
-
-    // divider lines
-    if (vals.length > 1) {
-      for (let i = 0; i < vals.length - 1; i++) {
-        const y1   = firstY + i * step;
-        const yMid = y1 + fontSize / 2 + LINE_MID_K * gap;
-        const half = Math.min(maxWidth / 2, Math.max(widths[i], widths[i + 1]) / 2 + LINE_PAD);
-
-        ctx.save();
-        ctx.lineCap = "round";
-        ctx.strokeStyle = "rgba(0,0,0,0.7)";
-        ctx.lineWidth = Math.max(4, 4 * (fontSize / 64));
-        ctx.beginPath(); ctx.moveTo(-half, yMid); ctx.lineTo(half, yMid); ctx.stroke();
-
-        ctx.strokeStyle = "rgba(255,255,255,0.95)";
-        ctx.lineWidth = Math.max(2, 2 * (fontSize / 64));
-        ctx.beginPath(); ctx.moveTo(-half, yMid); ctx.lineTo(half, yMid); ctx.stroke();
-        ctx.restore();
-      }
-    }
-
-    // draw numbers
-    for (let i = 0; i < vals.length; i++) {
-      const y = firstY + i * step;
-      ctx.font = `${weight} ${fontSize}px sans-serif`;
-      ctx.strokeText(vals[i], 0, y);
-      ctx.fillText(vals[i], 0, y);
-    }
-  };
 
   /* get wheel properties */
   let wheelWidth = canvas.getBoundingClientRect()['width'];
@@ -278,6 +275,7 @@ const createSpinner = function(canvas, spinnerData, sectors, interactive) {
           spinnerData.outcome_points = points;
           spinnerData.outcome_wedge = sector.label;
           spinnerData.outcome_color = sector.color;
+          //highlightLegendByColor(sector.color);
           drawSector(sectors, sectorIdx_real);
         };
       };
@@ -307,7 +305,6 @@ const createSpinner = function(canvas, spinnerData, sectors, interactive) {
     for (let i = 0; i < sectors.length; i++) {
       const ang = arc * i;
       ctx.save();
-
       // fill
       ctx.beginPath();
       ctx.fillStyle = sectors[i].color;
@@ -315,19 +312,13 @@ const createSpinner = function(canvas, spinnerData, sectors, interactive) {
       ctx.arc(rad, rad, rad, ang, ang + arc);
       ctx.lineTo(rad, rad);
       ctx.fill();
-
-      // text
-      ctx.translate(rad, rad);
-      const rotation = (arc/2) * (1 + 2*i) + Math.PI/2;
-      ctx.rotate(rotation);
-
-      const highlight = (isSpinning && i == sector);
-      drawWedgeLabel(sectors[i], highlight);
+      // no text on the wedge
       ctx.restore();
     }
   };
 
   drawSector(sectors, null);
+  renderLegend(sectors);
 
   function startAutoSpin() {
     direction = (Math.random() < 0.5 ? 1 : -1);

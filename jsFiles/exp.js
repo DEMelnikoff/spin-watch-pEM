@@ -225,31 +225,33 @@ const exp = (function() {
 
     const wedges = {
 
-      // singles
-      one:   { color:"#1F77B4", label:"1", points:[1] },   // blue
-      two:   { color:"#FF7F0E", label:"2", points:[2] },   // orange
-      three: { color:"#2CA02C", label:"3", points:[3] },   // green
-      four:  { color:"#D62728", label:"4", points:[4] },   // red
-      five:  { color:"#9467BD", label:"5", points:[5] },   // purple
-      six:   { color:"#8C564B", label:"6", points:[6] },   // brown
-      seven: { color:"#17BECF", label:"7", points:[7] },   // cyan
-      eight: { color:"#BCBD22", label:"8", points:[8] },   // olive
-      nine:  { color:"#E377C2", label:"9", points:[9] },   // pink
+        one:   { color:"#E41A1C", label:"1", points:[1] },   // blue
+        two:   { color:"#377EB8", label:"2", points:[2] },   // orange
+        three: { color:"#4DAF4A", label:"3", points:[3] },   // green
+        four:  { color:"#984EA3", label:"4", points:[4] },   // red
+        five:  { color:"#FF7F00", label:"5", points:[5] },   // purple
+        six:   { color:"#A65628", label:"6", points:[6] },   // brown
+        seven: { color:"#F781BF", label:"7", points:[7] },   // cyan
+        eight: { color:"#999999", label:"8", points:[8] },   // golden yellow (brighter than olive)
+        nine:  { color:"#66C2A5", label:"9", points:[9] },   // pink
 
-      // pairs
-      one_three:   { color:"#00A878", label:"1_3", points:[1,3] },     // teal
-      five_seven:  { color:"#FF6F61", label:"5_7", points:[5,7] },     // coral
-      two_four:    { color:"#3A86FF", label:"2_4", points:[2,4] },     // bright blue
-      six_eight:   { color:"#F6C85F", label:"6_8", points:[6,8] },     // mustard
-      three_five:  { color:"#7F3C8D", label:"3_5", points:[3,5] },     // deep purple
-      seven_nine:  { color:"#11A579", label:"7_9", points:[7,9] },     // green-teal
-
-      // triplets
-      one_three_five:   { color:"#785EF0", label:"1_3_5", points:[1,3,5] }, // indigo
-      two_four_six:     { color:"#E71D36", label:"2_4_6", points:[2,4,6] },  // crimson
-      three_five_seven: { color:"#06D6A0", label:"3_5_7", points:[3,5,7] },  // turquoise
+        one_three_five:   { color:"#FFD92F", label:"1_3_5", points:[1,3,5] }, // indigo
+        two_four_six:     { color:"#E7298A", label:"2_4_6", points:[2,4,6] }, // crimson
+        three_five_seven: { color:"#1B9E77", label:"3_5_7", points:[3,5,7] }, // turquoise (lighter/brighter than teal/green-teal)
 
     };
+
+    const pairs = {
+
+        one_three:   { color:"#E41A1C", label:"1_3", points:[1,3] },   // teal
+        five_seven:  { color:"#377EB8", label:"5_7", points:[5,7] },   // coral
+        two_four:    { color:"#4DAF4A", label:"2_4", points:[2,4] },   // bright blue (purer than #3A86FF)
+        six_eight:   { color:"#984EA3", label:"6_8", points:[6,8] },   // warm orange-tan (distinct from gold)
+        three_five:  { color:"#FF7F00", label:"3_5", points:[3,5] },   // deep purple
+        seven_nine:  { color:"#A65628", label:"7_9", points:[7,9] },   // green-teal (pushed more green than turquoise)
+
+    };
+
 
     function shuffleColorsInPlace(wedgesObj) {
         const shuffledColors = jsPsych.randomization.repeat(Object.values(wedgesObj).map(w => w.color), 1);
@@ -257,6 +259,7 @@ const exp = (function() {
     };
 
     shuffleColorsInPlace(wedges);
+    shuffleColorsInPlace(pairs);
 
     // define each wheel
     const wheels = [
@@ -265,9 +268,9 @@ const exp = (function() {
             {sectors: [ wedges.two, wedges.four, wedges.six, wedges.eight ],                                     wheel_id: 2, ev: 5, sd: 2, mi: 2},
             {sectors: [ wedges.three, wedges.five, wedges.seven, wedges.nine ],                                  wheel_id: 3, ev: 6, sd: 2, mi: 2},
 
-            {sectors: [ wedges.one_three, wedges.five_seven, wedges.one_three, wedges.five_seven ],              wheel_id: 4, ev: 4, sd: 2, mi: 1},
-            {sectors: [ wedges.two_four, wedges.six_eight, wedges.two_four, wedges.six_eight ],                  wheel_id: 5, ev: 5, sd: 2, mi: 1},
-            {sectors: [ wedges.three_five, wedges.seven_nine, wedges.three_five, wedges.seven_nine ],            wheel_id: 6, ev: 6, sd: 2, mi: 1},
+            {sectors: [ pairs.one_three, pairs.five_seven, pairs.one_three, pairs.five_seven ],              wheel_id: 4, ev: 4, sd: 2, mi: 1},
+            {sectors: [ pairs.two_four, pairs.six_eight, pairs.two_four, pairs.six_eight ],                  wheel_id: 5, ev: 5, sd: 2, mi: 1},
+            {sectors: [ pairs.three_five, pairs.seven_nine, pairs.three_five, pairs.seven_nine ],            wheel_id: 6, ev: 6, sd: 2, mi: 1},
 
             {sectors: [ wedges.one_three_five, wedges.one_three_five, wedges.one_three_five, wedges.seven ],    wheel_id: 7, ev: 4, sd: 2, mi: .81},
             {sectors: [ wedges.two_four_six, wedges.two_four_six, wedges.two_four_six, wedges.eight ],          wheel_id: 8, ev: 5, sd: 2, mi: .81},

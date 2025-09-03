@@ -83,14 +83,11 @@ var jsPsychCanvasButtonResponse = (function (jspsych) {
       trial(display_element, trial) {
           // create canvas
           var html = 
-              '<div id="jspsych-canvas-button-response-stimulus">' +
-                '<canvas id="jspsych-canvas-stimulus" height="' +
-                trial.canvas_size[0] +
-                '" width="' +
-                trial.canvas_size[1] +
-                '"></canvas>' +
-                '<div class="pointUp", id="spinUp"></div>' +
-              "</div>";
+            '<div id="jspsych-canvas-button-response-stimulus">' +
+              '<canvas id="jspsych-canvas-stimulus" height="' + trial.canvas_size[0] + '" width="' + trial.canvas_size[1] + '"></canvas>' +
+              '<div class="pointUp" id="spinUp"></div>' +
+              '<div id="wheel-legend" class="wheel-legend"></div>' +
+            "</div>";
 
           //show prompt if there is one
           if (trial.prompt !== null) {

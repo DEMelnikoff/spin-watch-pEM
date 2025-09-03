@@ -586,14 +586,19 @@
 }
 
 
+/* Stack canvas (and the pointer) above the legend */
 #jspsych-canvas-button-response-stimulus {
-  display: inline-flex;
+  display: flex;            /* was inline-flex */
+  flex-direction: column;   /* <— stack vertically */
+  align-items: center;      /* center children */
   position: relative;
   overflow: hidden;
 }
 
+/* Ensure the canvas keeps its size in flex container */
 #jspsych-canvas-stimulus {
   display: block;
+  flex: 0 0 auto;           /* no shrink, no grow */
 }
 
 
@@ -710,4 +715,35 @@
   backdrop-filter: blur(4px);
   border-bottom: 1px solid rgba(0,0,0,0.08);
   color: #111;
+}
+
+#wheel-legend.wheel-legend {
+  width: 100%;
+  max-width: 640px;           /* visually align with common canvas sizes */
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  margin-top: 12px;
+}
+
+.wheel-legend .legend-item {
+  min-width: 84px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 25px; 
+  text-align: center;
+  border: 2px solid rgba(0,0,0,0.22);
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.18) inset,
+    0 1px 2px rgba(0,0,0,0.06);
+  user-select: none;
+}
+
+.wheel-legend .legend-item.active {
+  outline: 3px solid #000;
+  box-shadow:
+    0 0 0 3px rgba(255,255,255,0.95),
+    0 2px 6px rgba(0,0,0,0.25);
 }
