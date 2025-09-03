@@ -180,7 +180,7 @@ const exp = (function() {
             </div>`,
         questions: [
             {
-                prompt: `What happens if a wheel lands on a wedge with 5?`, 
+                prompt: `What happens if a wheel lands on a wedge worth 5?`, 
                 name: `attnChk1`, 
                 options: ["I'll definitely receive 5 tokens.", "I'll randomly receive 5 or 7 tokens.", "I'll randomly receive 3, 5, or 7 tokens."],
             },
