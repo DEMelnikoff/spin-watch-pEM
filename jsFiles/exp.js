@@ -248,6 +248,7 @@ const exp = (function() {
       one_three_five:   { color:"#785EF0", label:"1_3_5", points:[1,3,5] }, // indigo
       two_four_six:     { color:"#E71D36", label:"2_4_6", points:[2,4,6] },  // crimson
       three_five_seven: { color:"#06D6A0", label:"3_5_7", points:[3,5,7] },  // turquoise
+
     };
 
     function shuffleColorsInPlace(wedgesObj) {
@@ -268,8 +269,8 @@ const exp = (function() {
             {sectors: [ wedges.two_four, wedges.six_eight, wedges.two_four, wedges.six_eight ],                  wheel_id: 5, ev: 5, sd: 2, mi: 1},
             {sectors: [ wedges.three_five, wedges.seven_nine, wedges.three_five, wedges.seven_nine ],            wheel_id: 6, ev: 6, sd: 2, mi: 1},
 
-            {sectors: [ wedges.one_three_five, wedges.one_three_five, wedges.one_three_five, wedges.seven ],      wheel_id: 7, ev: 4, sd: 2, mi: .81},
-            {sectors: [ wedges.two_four_six, wedges.two_four_six, wedges.two_four_six, wedges.eight ],            wheel_id: 8, ev: 5, sd: 2, mi: .81},
+            {sectors: [ wedges.one_three_five, wedges.one_three_five, wedges.one_three_five, wedges.seven ],    wheel_id: 7, ev: 4, sd: 2, mi: .81},
+            {sectors: [ wedges.two_four_six, wedges.two_four_six, wedges.two_four_six, wedges.eight ],          wheel_id: 8, ev: 5, sd: 2, mi: .81},
             {sectors: [ wedges.three_five_seven, wedges.three_five_seven, wedges.three_five_seven, wedges.nine ], wheel_id: 9, ev: 6, sd: 2, mi: .81},
 
         ];
@@ -469,7 +470,7 @@ const exp = (function() {
     p.save_data = {
         type: jsPsychPipe,
         action: "save",
-        experiment_id: "NXMAEMz1iFFW",
+        experiment_id: "G2LGMwhOcGwT",
         filename: filename,
         data_string: ()=>jsPsych.data.get().csv()
     };

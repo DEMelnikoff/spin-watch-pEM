@@ -56,105 +56,72 @@ const createSpinner = function(canvas, spinnerData, sectors, interactive) {
   const sampleOne = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
   const drawWedgeLabel = (w, highlight) => {
-    const vals = (Array.isArray(w.points) ? w.points : []).map(String);
+    const vals = Array.isArray(w.points) ? w.points.map(String) : [];
     if (!vals.length) return;
 
-    const count  = vals.length;                 // 1, 2, or 3
+    // ---- only tweak these if you want ----
+    const LABEL_FONT_PX   = 42;   // base font for all wedges
+    const HIGHLIGHT_SCALE = 1.15; // multiplier on winning/highlighted wedge
+
+    // ---- fixed layout constants (you don't need to touch these) ----
+    const GAP_EM         = 0.2;  // vertical gap as fraction of font
+    const R_OUTER_FRAC   = 0.92;  // outer bound of text band (as % of radius)
+    const R_INNER_FRAC   = 0.34;  // inner bound of text band (as % of radius)
+    const LINE_PAD       = 12;    // extra px beyond text width for divider length
+    const LINE_MID_K     = 0.33;  // 0.5=center; smaller moves line closer to text
+    const MAX_WIDTH_FRAC = 0.95;  // clamp width to this fraction of chord
+
+    // uniform font size (same for singles/doubles/triples)
+    let fontSize = LABEL_FONT_PX * (highlight ? HIGHLIGHT_SCALE : 1);
     const weight = highlight ? "bolder" : "bold";
 
-    // --- base font sizes (start points; fit loop still clamps) ---
-    const baseNormal    = { 1: 76,  2: 70,  3: 72 };
-    const baseHighlight = { 1: 96,  2: 90,  3: 94 };
-    let fontSize = (highlight ? baseHighlight[count] : baseNormal[count]) ?? (highlight ? 92 : 72);
+    // radial band and width/height budgets
+    const rOuter     = R_OUTER_FRAC * rad;
+    const rInner     = R_INNER_FRAC * rad;
+    const textRadius = (rOuter + rInner) / 2;
+    const maxHeight  = rOuter - rInner;
 
-    // --- minimum size (slightly higher for stacked so they don't collapse) ---
-    const minSize = count >= 2 ? (highlight ? 34 : 30) : 28;
-
-    // --- vertical gaps (tighter for stacked; doubles a touch looser than triples) ---
-    const gapNormal    = { 1: 0.00, 2: 0.32, 3: 0.28 };
-    const gapHighlight = { 1: 0.00, 2: 0.28, 3: 0.26 };
-    const gapRatio = (highlight ? gapHighlight[count] : gapNormal[count]) ?? (highlight ? 0.28 : 0.30);
-
-    const padX = 10;
-
-    // --- radial band geometry (controls vertical position & available height) ---
-    let rOuter, rInner, textRadius;
-
-    // Singles: center around ~0.60 * rad (inward from rim)
-    if (count === 1) {
-      rOuter     = 0.90 * rad;          // outer bound (keeps margin from rim)
-      rInner     = 0.30 * rad;          // inner bound
-      textRadius = 0.60 * rad;          // <-- vertical center for single numbers
-    } else {
-      // Stacked (keeps your existing behavior)
-      rOuter = 0.95 * rad;
-      rInner = (
-        count === 2 ? (highlight ? 0.30 : 0.38) :
-                      (highlight ? 0.25 : 0.32)
-      ) * rad;
-      textRadius = (rOuter + rInner) / 2; // center of band
-    }
-
-    const maxHeight = rOuter - rInner;
-
-    // Width budget uses the chord at the text radius.
     const chord    = 2 * textRadius * Math.sin(arc / 2);
-    const maxWidth = 0.95 * chord;
+    const maxWidth = MAX_WIDTH_FRAC * chord;
 
-    // Fit loop: shrink until both width and height constraints are satisfied.
-    let widths = [];
-    let totalHeight = 0;
-    while (fontSize >= minSize) {
-      ctx.font = `${weight} ${fontSize}px sans-serif`;
-      widths = vals.map(t => ctx.measureText(t).width);
+    // set font & measure once
+    ctx.font = `${weight} ${fontSize}px sans-serif`;
+    let widths = vals.map(t => ctx.measureText(t).width);
 
-      const gap = fontSize * gapRatio;
-      totalHeight = vals.length * fontSize + (vals.length - 1) * gap;
+    // layout
+    const gap  = fontSize * GAP_EM;
+    const step = fontSize + gap;
 
-      const fitsW = (Math.max(...widths) + 2 * padX) <= maxWidth;
-      const fitsH = totalHeight <= maxHeight;
-      if (fitsW && fitsH) break;
-
-      fontSize -= 2;
-    }
-
-    // --- draw ---
     ctx.textAlign = "center";
-    ctx.textBaseline = "middle";                      // easier vertical centering
+    ctx.textBaseline = "middle";
     ctx.fillStyle = "#fff";
     ctx.strokeStyle = "black";
     ctx.lineWidth = Math.max(2, 3 * (fontSize / 64));
 
-    const gap  = fontSize * gapRatio;
-    const step = fontSize + gap;
-
-    // centers the whole block around -textRadius (negative y = outward)
+    // center block in the band (negative y = outward from center)
     const firstY = -textRadius - 0.5 * (vals.length - 1) * step;
 
-    // divider lines between rows
+    // divider lines
     if (vals.length > 1) {
       for (let i = 0; i < vals.length - 1; i++) {
-        const y1 = firstY + i * step;
-        const y2 = firstY + (i + 1) * step;
-        const yMid = (y1 + y2) / 2;
-
-        const adjHalf = Math.min(maxWidth / 2, Math.max(widths[i], widths[i + 1]) / 2 + padX);
+        const y1   = firstY + i * step;
+        const yMid = y1 + fontSize / 2 + LINE_MID_K * gap;
+        const half = Math.min(maxWidth / 2, Math.max(widths[i], widths[i + 1]) / 2 + LINE_PAD);
 
         ctx.save();
         ctx.lineCap = "round";
-        // dark under-stroke
         ctx.strokeStyle = "rgba(0,0,0,0.7)";
         ctx.lineWidth = Math.max(4, 4 * (fontSize / 64));
-        ctx.beginPath(); ctx.moveTo(-adjHalf, yMid); ctx.lineTo(adjHalf, yMid); ctx.stroke();
-        // light top-stroke
+        ctx.beginPath(); ctx.moveTo(-half, yMid); ctx.lineTo(half, yMid); ctx.stroke();
+
         ctx.strokeStyle = "rgba(255,255,255,0.95)";
         ctx.lineWidth = Math.max(2, 2 * (fontSize / 64));
-        ctx.beginPath(); ctx.moveTo(-adjHalf, yMid); ctx.lineTo(adjHalf, yMid); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(-half, yMid); ctx.lineTo(half, yMid); ctx.stroke();
         ctx.restore();
       }
     }
 
-    // numbers
+    // draw numbers
     for (let i = 0; i < vals.length; i++) {
       const y = firstY + i * step;
       ctx.font = `${weight} ${fontSize}px sans-serif`;
