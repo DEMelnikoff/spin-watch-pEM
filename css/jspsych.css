@@ -588,17 +588,15 @@
 
 /* Stack canvas (and the pointer) above the legend */
 #jspsych-canvas-button-response-stimulus {
-  display: flex;            /* was inline-flex */
-  flex-direction: column;   /* <— stack vertically */
-  align-items: center;      /* center children */
-  position: relative;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;                 /* spacing between legend and wheel */
 }
 
 /* Ensure the canvas keeps its size in flex container */
 #jspsych-canvas-stimulus {
   display: block;
-  flex: 0 0 auto;           /* no shrink, no grow */
 }
 
 
@@ -635,31 +633,33 @@
 
 /* spinner styling */
 #spinUp {
-  font: 1rem/0 sans-serif;
-  user-select: none;
- /* cursor: pointer; */
-  display: flex;
-  justify-content: center;
-  align-items: center;
   position: absolute;
   top: 50%;
   left: 50%;
+  transform: translate(-50%, -50%);
+
+  font: 1rem/0 sans-serif;
+  user-select: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   width: 14%;
   height: 8%;
-  margin-top: -4%;
-  margin-left: -7%;
   color: white;
   background: white;
   box-shadow: 0 0 0 4px white, 0 0px 15px 5px rgba(0, 0, 0, 0.6);
   border-radius: 10%;
   font-weight: bold;
-  font-size: 1.4rem;  /* Adjust as needed */
+  font-size: 1.4rem;
 }
 
-
+/* Pointer tip (up) */
 .pointUp::after {
   content: '';
   position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   top: -36px;
   border: 38px solid transparent;
   border-bottom-color: white;
@@ -718,13 +718,19 @@
 }
 
 #wheel-legend.wheel-legend {
-  width: 100%;
-  max-width: 640px;           /* visually align with common canvas sizes */
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   gap: 10px 14px;
-  margin-top: 12px;
+  margin: 0;                 /* container gap provides spacing */
+  max-width: 640px;
+  width: 100%;
+}
+
+.wheel-stage {
+  position: relative;        /* <-- important: pointer positions to this */
+  display: inline-block;
+  line-height: 0;            /* tidy inline gaps */
 }
 
 .wheel-legend .legend-item {
@@ -746,4 +752,26 @@
   box-shadow:
     0 0 0 3px rgba(255,255,255,0.95),
     0 2px 6px rgba(0,0,0,0.25);
+}
+
+#wheel-legend-top {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 10px; /* space between top legend and wheel */
+}
+
+#wheel-legend-bottom {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 10px; /* space between wheel and bottom legend */
+}
+
+#wheel-legend-top.wheel-legend {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
 }

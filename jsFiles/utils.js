@@ -83,45 +83,56 @@ const createSpinner = function(canvas, spinnerData, sectors, interactive) {
     }));
   }
 
-  function ensureLegendContainer() {
-    let el = document.getElementById("wheel-legend");
+  function ensureLegendTopContainer() {
+    const host = document.getElementById("jspsych-canvas-button-response-stimulus");
+    if (!host) return null;
+    let el = document.getElementById("wheel-legend-top");
     if (!el) {
-      const host = document.getElementById("jspsych-canvas-button-response-stimulus");
-      if (host) {
-        host.insertAdjacentHTML("beforeend", '<div id="wheel-legend" class="wheel-legend"></div>');
-        el = document.getElementById("wheel-legend");
-      }
+      host.insertAdjacentHTML("afterbegin", '<div id="wheel-legend-top" class="wheel-legend"></div>');
+      el = document.getElementById("wheel-legend-top");
     }
     return el;
   }
 
-  function renderLegend(sectors) {
-    const container = ensureLegendContainer();
-    if (!container) return;
-    const groups = legendGroupsFromSectors(sectors);
+  function legendOrderIndices(tot, arc) {
+    // center angle of wedge i (in radians, Canvas coords, 0 at 3 o'clock, increasing clockwise)
+    const center = i => (i + 0.5) * arc;           // 0.5 puts you at wedge middle
+    const start = 3 * Math.PI / 4;                  // 135° = top-left anchor
+    // key increases clockwise from top-left
+    const key = theta => ( (theta - start) + 2*Math.PI ) % (2*Math.PI);
+    return Array.from({length: tot}, (_, i) => i)
+      .sort((a, b) => key(center(a)) - key(center(b)));
+  }
 
-    container.innerHTML = groups.map(g => {
-      const text = g.values.join(" / "); // show all values sharing this color
-      const fg = contrastTextColor(g.color);
+  // NEW: render one blotch per wedge (keeps duplicates)
+  function renderLegend(sectors) {
+    const container = ensureLegendTopContainer();
+    if (!container) return;
+
+    const order = legendOrderIndices(sectors.length, arc);  // use geometry-based order
+    container.innerHTML = order.map((i) => {
+      const s = sectors[i];
+      const vals = Array.isArray(s.points) ? s.points : [s.points];
+      const text = vals.join(" / ");
+      const fg = contrastTextColor(s.color);
       return `
-        <div class="legend-item" data-color="${g.color}"
-             style="background:${g.color}; color:${fg};">
+        <div class="legend-item"
+             data-idx="${i}"
+             data-color="${s.color}"
+             style="background:${s.color}; color:${fg};">
           ${text}
         </div>
       `;
     }).join("");
   }
 
-  function highlightLegendByColor(color) {
-    const items = document.querySelectorAll("#wheel-legend .legend-item");
+  // OPTIONAL: highlight by *index* (so duplicates don't all light up)
+  function highlightLegendByIndex(idx) {
+    const items = document.querySelectorAll("#wheel-legend-top .legend-item");
     items.forEach(it => {
-      if (it.getAttribute("data-color") === color) {
-        it.classList.add("active");
-      } else {
-        it.classList.remove("active");
-      }
+      it.classList.toggle("active", Number(it.getAttribute("data-idx")) === idx);
     });
-  }
+}
 
   /* --- NEW: helpers for multi-number wedges --- */
 
