@@ -302,17 +302,24 @@ const createSpinner = function(canvas, spinnerData, sectors, interactive) {
 
   //* Draw sectors and prizes texts to canvas */
   const drawSector = (sectors, sector) => {
+    ctx.lineWidth = 2;         // thickness of divider lines
+    ctx.strokeStyle = "#fff";  // divider color (white works well on dark colors)
+
     for (let i = 0; i < sectors.length; i++) {
       const ang = arc * i;
       ctx.save();
-      // fill
+
+      // fill wedge
       ctx.beginPath();
-      ctx.fillStyle = sectors[i].color;
       ctx.moveTo(rad, rad);
       ctx.arc(rad, rad, rad, ang, ang + arc);
-      ctx.lineTo(rad, rad);
+      ctx.closePath();
+      ctx.fillStyle = sectors[i].color;
       ctx.fill();
-      // no text on the wedge
+
+      // draw divider stroke
+      ctx.stroke();
+
       ctx.restore();
     }
   };
