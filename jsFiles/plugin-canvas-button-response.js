@@ -103,9 +103,9 @@ var jsPsychCanvasButtonResponse = (function (jspsych) {
 
           // store data
           let spinnerData = {
-            outcome_wedge: null,
-            outcome_points: null,
-            outcome_color: null,
+            outcome_wedge: [],
+            outcome_points: [],
+            outcome_color: [],
             rt: null,
           };
           trial.stimulus(c, spinnerData);
@@ -151,7 +151,7 @@ var jsPsychCanvasButtonResponse = (function (jspsych) {
           }
           // end trial
           const waitForEnd = setInterval(function() {
-            if (spinnerData.outcome_points) {
+            if (spinnerData.outcome_points.length >= 5) {
               clearInterval(waitForEnd);
               setTimeout(after_response, 1500);
             }

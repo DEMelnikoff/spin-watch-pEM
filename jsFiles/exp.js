@@ -66,12 +66,12 @@ const exp = (function() {
             </div>`,
 
             `<div class='parent'>
-                <p>For example, if this wheel landed on purple...</p>
-                <img src="./img/highMI-activated.png" style="width:70%; height:70%">
+                <p>For example, if this wheel landed on orange...</p>
+                <img src="./img/highMI.png" style="width:70%; height:70%">
             </div>`,
 
             `<div class='parent'>
-                <p>...you'd receive 7 tokens.</p>
+                <p>...you'd receive 5 tokens.</p>
                 <img src="./img/outcome.png" style="width:70%; height:70%">
             </div>`,
 
@@ -92,12 +92,7 @@ const exp = (function() {
             </div>`,
 
             `<div class='parent'>
-                <p>In this example, you'd have an equal chance of receiving 3 or 5 tokens.</p>
-                <img src="./img/mediumMI-activated2.png" style="width:70%; height:70%">
-            </div>`,
-
-            `<div class='parent'>
-                <p>In this example, you'd have an equal chance of receiving 2, 4, or 6 tokens.</p>
+                <p>In this example, you'd have an equal chance of receiving 3, 5, or 9 tokens.</p>
                 <img src="./img/lowMI-activated.png" style="width:70%; height:70%">
             </div>`,
 
@@ -263,8 +258,19 @@ const exp = (function() {
         seven_nine:  { color:"#A65628", label:"7_9", points:[7,9] },   // green-teal (pushed more green than turquoise)
 
         one_three_five:   { color:"#FFD92F", label:"1_3_5", points:[1,3,5] }, // indigo
-        two_four_six:     { color:"#E7298A", label:"2_4_6", points:[2,4,6] }, // crimson
+        one_three_seven:  { color:"#E7298A", label:"1_3_7", points:[1,3,7] }, // crimson
+        one_five_seven:   { color:"#1B9E77", label:"1_5_7", points:[1,5,7] }, // turquoise (lighter/brighter than teal/green-teal)
         three_five_seven: { color:"#1B9E77", label:"3_5_7", points:[3,5,7] }, // turquoise (lighter/brighter than teal/green-teal)
+
+        two_four_six:   { color:"#FFD92F", label:"2_4_6", points:[2,4,6] }, // indigo
+        two_four_eight:  { color:"#E7298A", label:"2_4_8", points:[2,4,8] }, // crimson
+        two_six_eight:   { color:"#1B9E77", label:"2_6_8", points:[2,6,8] }, // turquoise (lighter/brighter than teal/green-teal)
+        four_six_eight: { color:"#1B9E77", label:"4_6_8", points:[4,6,8] }, // turquoise (lighter/brighter than teal/green-teal)
+
+        three_five_seven:   { color:"#FFD92F", label:"2_4_6", points:[3,5,7] }, // indigo
+        three_five_nine:  { color:"#E7298A", label:"2_4_8", points:[3,5,9] }, // crimson
+        three_seven_nine:   { color:"#1B9E77", label:"2_6_8", points:[3,7,9] }, // turquoise (lighter/brighter than teal/green-teal)
+        five_seven_nine: { color:"#1B9E77", label:"4_6_8", points:[5,7,9] }, // turquoise (lighter/brighter than teal/green-teal)
 
         one_three_five_seven: { color:"#1B9E77", label:"1_3_5_7", points:[1,3,5,7] }, // turquoise (lighter/brighter than teal/green-teal)
         two_four_six_eight: { color:"#1B9E77", label:"2_4_6_8", points:[2,4,6,8] }, // turquoise (lighter/brighter than teal/green-teal)
@@ -288,9 +294,9 @@ const exp = (function() {
             {sectors: [ wedges.six_eight, wedges.two_four, wedges.two_four, wedges.six_eight ],                                               wheel_id: 5, ev: 5, sd: 2, mi: 1},
             {sectors: [ wedges.seven_nine, wedges.three_five, wedges.three_five, wedges.seven_nine ],                                         wheel_id: 6, ev: 6, sd: 2, mi: 1},
 
-            {sectors: [ wedges.seven, wedges.one_three_five, wedges.one_three_five, wedges.one_three_five ],                                  wheel_id: 7, ev: 4, sd: 2, mi: .81},
-            {sectors: [ wedges.eight, wedges.two_four_six, wedges.two_four_six, wedges.two_four_six ],                                        wheel_id: 8, ev: 5, sd: 2, mi: .81},
-            {sectors: [ wedges.nine, wedges.three_five_seven, wedges.three_five_seven, wedges.three_five_seven  ],                            wheel_id: 9, ev: 6, sd: 2, mi: .81},
+            {sectors: [ wedges.three_five_seven, wedges.one_three_five, wedges.one_three_seven, wedges.one_five_seven ],                      wheel_id: 7, ev: 4, sd: 2, mi: .42},
+            {sectors: [ wedges.four_six_eight, wedges.two_four_six, wedges.two_four_eight, wedges.two_six_eight ],                            wheel_id: 8, ev: 5, sd: 2, mi: .42},
+            {sectors: [ wedges.five_seven_nine, wedges.three_five_seven, wedges.three_five_nine, wedges.three_seven_nine  ],                  wheel_id: 9, ev: 6, sd: 2, mi: .42},
 
             {sectors: [ wedges.one_three_five_seven, wedges.one_three_five_seven, wedges.one_three_five_seven, wedges.one_three_five_seven ], wheel_id: 10, ev: 4, sd: 2, mi: 0},
             {sectors: [ wedges.two_four_six_eight, wedges.two_four_six_eight, wedges.two_four_six_eight, wedges.two_four_six_eight ],         wheel_id: 11, ev: 5, sd: 2, mi: 0},
@@ -408,14 +414,9 @@ const exp = (function() {
         },
     };
 
-    const spinLoop = {
-        timeline: [spin, feedback],
-        repetitions: 5,
-    }
-
     // timeline: main task
     p.task = {
-        timeline: [spinLoop, flowMeasure, happinessMeasure],
+        timeline: [spin, flowMeasure, happinessMeasure],
         repetitions: 1,
         timeline_variables: wheels,
         randomize_order: true,
@@ -498,7 +499,7 @@ const exp = (function() {
     p.save_data = {
         type: jsPsychPipe,
         action: "save",
-        experiment_id: "YyTLc631H25a",
+        experiment_id: "7pAJighOzxol",
         filename: filename,
         data_string: ()=>jsPsych.data.get().csv()
     };

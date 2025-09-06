@@ -132,8 +132,40 @@ const createSpinner = function(canvas, spinnerData, sectors, interactive) {
     items.forEach(it => {
       it.classList.toggle("active", Number(it.getAttribute("data-idx")) === idx);
     });
-}
+  };
 
+  function getPointerEl() {
+    return document.getElementById("spinUp");
+  }
+
+  function setPointerText(txt, opts = {}) {
+    const el = document.getElementById("spinUp");
+    if (!el) return;
+
+    // Text
+    el.textContent = txt == null ? "" : String(txt);
+
+    // Optional text size override
+    if (opts.fontSize) el.style.fontSize = opts.fontSize;
+
+    // Text color: default white so it pops on a colored core
+    el.style.color = opts.color || "#fff";
+
+    // Outer container background stays white
+    el.style.background = "#fff";
+
+    // Colored inner "core" using a BIG inset shadow that fills the box
+    // Keeps your white ring (4px) around it.
+    const core = opts.coreColor || opts.bg || null;
+    if (core) {
+      el.style.boxShadow =
+        `0 0 0 4px #fff,        /* white ring */ 
+         0 0 0 9999px ${core} inset`;  // solid inner core fill
+    } else {
+      // fallback: just the white ring, no fill
+      el.style.boxShadow = "0 0 0 4px #fff";
+    }
+  }
   /* --- NEW: helpers for multi-number wedges --- */
 
   const sampleOne = (arr) => arr[Math.floor(Math.random() * arr.length)];
@@ -283,10 +315,14 @@ const createSpinner = function(canvas, spinnerData, sectors, interactive) {
           } else {
             points = sector.points[0]
           }
-          spinnerData.outcome_points = points;
-          spinnerData.outcome_wedge = sector.label;
-          spinnerData.outcome_color = sector.color;
-          //highlightLegendByColor(sector.color);
+          spinnerData.outcome_points.push(points);
+          spinnerData.outcome_wedge.push(sector.label);
+          spinnerData.outcome_color.push(sector.color);
+          updateScore(parseFloat(sector.label), sector.color);
+          setPointerText(`+${points}`, {
+            fontSize: "3rem",
+            coreColor: sector.color  // <— fills inner core with the wedge color
+          });
           drawSector(sectors, sectorIdx_real);
         };
       };
@@ -296,6 +332,19 @@ const createSpinner = function(canvas, spinnerData, sectors, interactive) {
 
   /* generate random float in range min-max */
   const rand = (m, M) => Math.random() * (M - m) + m;
+
+  const updateScore = (points, color) => {
+    spin_num--;
+    let s = 's';
+    spin_num == 1 ? s == '' : s == 's';
+    setTimeout(() => {
+      setPointerText("");
+      isSpinning = false;
+      drawSector(sectors, null);
+      onWheel ? canvas.style.cursor = "grab" : canvas.style.cursor = "";
+      if (!interactive && spinnerData.outcome_points.length < 5) { setTimeout(startAutoSpin, 225) };
+    }, 1500);
+  };
 
   const getIndex = () => {
     let normAngle = 0;

@@ -592,6 +592,7 @@
   flex-direction: column;
   align-items: center;
   gap: 12px;                 /* spacing between legend and wheel */
+  padding-top: 110px;
 }
 
 /* Ensure the canvas keeps its size in flex container */
@@ -637,33 +638,38 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  
+  width: 22%;
+  height: 14%;
+  border-radius: 12%;
 
-  font: 1rem/0 sans-serif;
-  user-select: none;
   display: flex;
   justify-content: center;
   align-items: center;
 
-  width: 14%;
-  height: 8%;
-  color: white;
-  background: white;
-  box-shadow: 0 0 0 4px white, 0 0px 15px 5px rgba(0, 0, 0, 0.6);
-  border-radius: 10%;
+  background: #fff;
+  box-shadow: 0 0 0 4px #fff;
+
   font-weight: bold;
-  font-size: 1.4rem;
+  font-size: 2.2rem;
+  color: #fff;
+
+  z-index: 2;   /* ensure the box sits above the arrow */
 }
 
-/* Pointer tip (up) */
 .pointUp::after {
   content: '';
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  top: -36px;
+
+  /* place arrow relative to box height */
+  top: calc(-45% - 10px);  /* exactly one box height above + small gap */
+
   border: 38px solid transparent;
   border-bottom-color: white;
   border-top: none;
+  pointer-events: none;
 }
 
 .pointDown::after {
