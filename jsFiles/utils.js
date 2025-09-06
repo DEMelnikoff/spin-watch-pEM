@@ -149,7 +149,7 @@ const createSpinner = function(canvas, spinnerData, sectors, interactive) {
     if (opts.fontSize) el.style.fontSize = opts.fontSize;
 
     // Text color: default white so it pops on a colored core
-    el.style.color = opts.color || "#fff";
+    el.style.color = opts.color || "black";
 
     // Outer container background stays white
     el.style.background = "#fff";
@@ -321,7 +321,7 @@ const createSpinner = function(canvas, spinnerData, sectors, interactive) {
           updateScore(parseFloat(sector.label), sector.color);
           setPointerText(`+${points}`, {
             fontSize: "3rem",
-            coreColor: sector.color  // <— fills inner core with the wedge color
+            //coreColor: sector.color  // <— fills inner core with the wedge color
           });
           drawSector(sectors, sectorIdx_real);
         };
