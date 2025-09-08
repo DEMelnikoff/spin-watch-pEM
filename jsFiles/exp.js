@@ -29,7 +29,7 @@ const exp = (function() {
             `<div class='parent'>
                 <p><strong>Welcome to Wheel of Fortune!</strong></p>
                 <p>In Wheel of Fortune, you'll spin a series of prize wheels.</p>
-                <p>With each spin, you'll earn tokens.</p>
+                <p>With each spin, you'll have a chance of earning tokens.</p>
                 <p>Your goal is to earn as many tokens as possible!</p>
             </div>`,
         ],
@@ -38,7 +38,7 @@ const exp = (function() {
             `<div class='parent'>
                 <p><strong>Welcome to Wheel of Fortune!</strong></p>
                 <p>In Wheel of Fortune, you'll observe a series of spinning prize wheels.</p>
-                <p>Each time a prize wheel spins, you'll earn tokens.</p>
+                <p>Each time a prize wheel spins, you'll have a chance of earning tokens.</p>
                 <p>Your goal is to earn as many tokens as possible!</p>
             </div>`,
         ],
@@ -47,58 +47,68 @@ const exp = (function() {
             `<div class='parent'>
                 <p>The more tokens you earn, the better your chances of winning a <strong>$100.00 bonus prize</strong>.</p>
                 <p>The tokens you earn will be entered into a lottery, and if one of your tokens is drawn, you'll win $100.00. 
-                To maximize your chances of winning a $100.00 bonus, you'll need to earn as many tokens as possible.</p>
+                To maximize your odds of winning $100.00, earn as many tokens as possible.</p>
             </div>`,
 
             `<div class='parent'>
-                <p>Each wheel is divided into four wedges, like this:</p>
-                <img src="./img/highMI.png" style="width:70%; height:70%">
+                <p>In Wheel of Fortune, tokens are earned by winning "jackpots."</p>
+                <p>In each round of Wheel of Fortune, jackpots are worth a different number of tokens.</p>
             </div>`,
 
             `<div class='parent'>
-                <p>The value of each color is displayed above the wheel.</p>
-                <img src="./img/highMI.png" style="width:70%; height:70%">
+                <p>To start each round, you'll see a message indicating the value of each jackpot.</p>
+                <p>For example, this message means that in Round 1, each jackpot is worth 5 tokens:</p>
+                <img src="./img/round-info.png" style="width:70%; height:70%">
             </div>`,
 
             `<div class='parent'>
-                <p>After a wheel stops spinning, you'll see how many tokens you won.</p>
-                <img src="./img/highMI.png" style="width:70%; height:70%">
-            </div>`,
-
-            `<div class='parent'>
-                <p>For example, if this wheel landed on orange...</p>
-                <img src="./img/highMI.png" style="width:70%; height:70%">
-            </div>`,
-
-            `<div class='parent'>
-                <p>...you'd receive 5 tokens.</p>
-                <img src="./img/outcome.png" style="width:70%; height:70%">
-            </div>`,
-
-            `<div class='parent'>
-                <p>Sometimes the colors have multiple values.</p>
+                <p>To win jackpots, you'll spin wheels like this:</p>
                 <img src="./img/mediumMI.png" style="width:70%; height:70%">
             </div>`,
 
             `<div class='parent'>
-                <p>If a wheel lands on a color with multiple values, one value is randomly selected.</p>
-                <p>You then receive that many tokens.</p>
+                <p>Your probability of winning a jackpot depends on where the wheel lands.</p>
                 <img src="./img/mediumMI.png" style="width:70%; height:70%">
             </div>`,
 
             `<div class='parent'>
-                <p>In this example, you'd have an equal chance of receiving 7 or 9 tokens.</p>
-                <img src="./img/mediumMI-activated.png" style="width:70%; height:70%">
+                <p>If a wheel lands on 80%, you'll have an 80% chance of winning a jackpot.</p>
+                <img src="./img/mediumMI-activated1.png" style="width:70%; height:70%">
             </div>`,
 
             `<div class='parent'>
-                <p>In this example, you'd have an equal chance of receiving 3, 5, or 9 tokens.</p>
-                <img src="./img/lowMI-activated.png" style="width:70%; height:70%">
+                <p>If a wheel lands on 20%, you'll have a 20% chance of winning a jackpot.</p>
+                <img src="./img/mediumMI-activated0.png" style="width:70%; height:70%">
             </div>`,
 
             `<div class='parent'>
-                <p>In this example, you'd have an equal chance of receiving 2, 4, 6, or 8 tokens.</p>
-                <img src="./img/zeroMI-activated.png" style="width:70%; height:70%">
+                <p>If a wheel lands on 100%, you'll have a 100% chance of winning a jackpot.</p>
+                <img src="./img/highMI-activated1.png" style="width:70%; height:70%">
+            </div>`,
+
+            `<div class='parent'>
+                <p>If a wheel lands on 0%, you'll have a 0% chance of winning a jackpot.</p>
+                <img src="./img/highMI-activated0.png" style="width:70%; height:70%">
+            </div>`,
+
+            `<div class='parent'>
+                <p>If a wheel lands on 60%, you'll have a 60% chance of winning a jackpot.</p>
+                <img src="./img/lowMI-activated1.png" style="width:70%; height:70%">
+            </div>`,
+
+            `<div class='parent'>
+                <p>If a wheel lands on 40%, you'll have a 40% chance of winning a jackpot.</p>
+                <img src="./img/lowMI-activated0.png" style="width:70%; height:70%">
+            </div>`,
+
+            `<div class='parent'>
+                <p>If you win a jackpot, you'll see how many tokens you won:</p>
+                <img src="./img/jackpot.png" style="width:70%; height:70%">
+            </div>`,
+
+            `<div class='parent'>
+                <p>If you fail to win a jackpot, you'll see you earned 0 tokens:</p>
+                <img src="./img/no-jackpot.png" style="width:70%; height:70%">
             </div>`,
         ],
 
@@ -130,8 +140,7 @@ const exp = (function() {
             </div>`,
 
             `<div class='parent'>
-                <p>You'll complete 12 rounds of Wheel of Fortune.</p>
-                <p>Each round will feature a different wheel.</p>
+                <p>You'll complete 9 rounds of Wheel of Fortune.</p>
                 <p>After each round, you'll answer questions about your feelings: You'll report how <strong>immersed and engaged</strong> you felt during the last round,
                 as well as how <strong>happy</strong> you currently feel.</p>
             </div>`,            
@@ -164,7 +173,7 @@ const exp = (function() {
         allow_keys: false,
     };
 
-    let correctAnswers = ["I'll definitely receive 5 tokens.", "I'll randomly receive 5 or 7 tokens.", "I'll randomly receive 3, 5, or 7 tokens.", "I'll randomly receive 3, 5, 7, or 9 tokens."];
+    let correctAnswers = ["I'll have a 100% chance of winning a jackpot.", "I'll have an 80% chance of winning a jackpot.", "I'll have a 20% chance of winning a jackpot.", "I'll have a 0% chance of winning a jackpot."];
 
     const errorMessage = {
         type: jsPsychInstructions,
@@ -180,24 +189,24 @@ const exp = (function() {
             </div>`,
         questions: [
             {
-                prompt: `What happens if a wheel lands on a wedge worth 5?`, 
+                prompt: `What happens if a wheel lands on 100%?`, 
                 name: `attnChk1`, 
-                options: ["I'll definitely receive 5 tokens.", "I'll randomly receive 5 or 7 tokens.", "I'll randomly receive 3, 5, or 7 tokens.", "I'll randomly receive 3, 5, 7, or 9 tokens."],
+                options: ["I'll have a 100% chance of winning a jackpot.", "I'll have an 80% chance of winning a jackpot.", "I'll have a 20% chance of winning a jackpot.", "I'll have a 0% chance of winning a jackpot."],
             },
             {
-                prompt: `What happens if a wheel lands on a wedge worth 5 or 7?`, 
+                prompt: `What happens if a wheel lands on 80%?`, 
                 name: `attnChk2`, 
-                options: ["I'll definitely receive 5 tokens.", "I'll randomly receive 5 or 7 tokens.", "I'll randomly receive 3, 5, or 7 tokens.", "I'll randomly receive 3, 5, 7, or 9 tokens."],
+                options: ["I'll have a 100% chance of winning a jackpot.", "I'll have an 80% chance of winning a jackpot.", "I'll have a 20% chance of winning a jackpot.", "I'll have a 0% chance of winning a jackpot."],
             },
             {
-                prompt: `What happens if a wheel lands on a wedge worth 3, 5, or 7?`, 
+                prompt: `What happens if a wheel lands on 20%?`, 
                 name: `attnCh3`, 
-                options: ["I'll definitely receive 5 tokens.", "I'll randomly receive 5 or 7 tokens.", "I'll randomly receive 3, 5, or 7 tokens.", "I'll randomly receive 3, 5, 7, or 9 tokens."],
+                options: ["I'll have a 100% chance of winning a jackpot.", "I'll have an 80% chance of winning a jackpot.", "I'll have a 20% chance of winning a jackpot.", "I'll have a 0% chance of winning a jackpot."],
             },
             {
-                prompt: `What happens if a wheel lands on a wedge worth 3, 5, 7, or 9?`, 
+                prompt: `What happens if a wheel lands on 0%?`, 
                 name: `attnCh4`, 
-                options: ["I'll definitely receive 5 tokens.", "I'll randomly receive 5 or 7 tokens.", "I'll randomly receive 3, 5, or 7 tokens.", "I'll randomly receive 3, 5, 7, or 9 tokens."],
+                options: ["I'll have a 100% chance of winning a jackpot.", "I'll have an 80% chance of winning a jackpot.", "I'll have a 20% chance of winning a jackpot.", "I'll have a 0% chance of winning a jackpot."],
             },
         ],
         scale_width: 500,
@@ -505,6 +514,6 @@ const exp = (function() {
 
 }());
 
-const timeline = [exp.task, exp.consent, exp.instLoop, exp.postIntro, exp.task, exp.demographics, exp.save_data];
+const timeline = [exp.consent, exp.instLoop, exp.postIntro, exp.task, exp.demographics, exp.save_data];
 
 jsPsych.run(timeline);
