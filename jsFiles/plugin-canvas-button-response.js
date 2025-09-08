@@ -84,7 +84,6 @@ var jsPsychCanvasButtonResponse = (function (jspsych) {
           // create canvas
           var html = 
             '<div id="jspsych-canvas-button-response-stimulus">' +
-              '<div id="wheel-legend" class="wheel-legend"></div>' +        // moved up
               '<div class="wheel-stage">' +                                  // NEW wrapper
                 '<canvas id="jspsych-canvas-stimulus" height="' + trial.canvas_size[0] +
                 '" width="' + trial.canvas_size[1] + '"></canvas>' +
@@ -103,9 +102,9 @@ var jsPsychCanvasButtonResponse = (function (jspsych) {
 
           // store data
           let spinnerData = {
-            outcome_wedge: [],
-            outcome_points: [],
-            outcome_color: [],
+            outcome_wedge: null,
+            outcome_bonus: null,
+            outcome_color: null,
             rt: null,
           };
           trial.stimulus(c, spinnerData);
@@ -120,7 +119,7 @@ var jsPsychCanvasButtonResponse = (function (jspsych) {
               // gather the data to store for the trial
               var trial_data = {
                   outcome_wedge: spinnerData.outcome_wedge,
-                  outcome_points: spinnerData.outcome_points,
+                  outcome_bonus: spinnerData.outcome_bonus,
                   outcome_color: spinnerData.outcome_color,
                   rt: spinnerData.rt,
               };
@@ -151,7 +150,7 @@ var jsPsychCanvasButtonResponse = (function (jspsych) {
           }
           // end trial
           const waitForEnd = setInterval(function() {
-            if (spinnerData.outcome_points.length >= 5) {
+            if (spinnerData.outcome_bonus !== null) {
               clearInterval(waitForEnd);
               setTimeout(after_response, 1500);
             }

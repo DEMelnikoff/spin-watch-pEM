@@ -51,121 +51,38 @@ const createSpinner = function(canvas, spinnerData, sectors, interactive) {
   /* get context */
   const ctx = canvas.getContext("2d"); 
 
-  // Decide black/white text for contrast on a given bg color
-  function contrastTextColor(hex) {
-    // expect "#rrggbb"
-    const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    if (!m) return "#000";
-    const r = parseInt(m[1], 16), g = parseInt(m[2], 16), b = parseInt(m[3], 16);
-    // relative luminance (sRGB)
-    const L = (v) => {
-      v /= 255;
-      return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4);
-    };
-    const Y = 0.2126*L(r) + 0.7152*L(g) + 0.0722*L(b);
-    return Y > 0.45 ? "#000" : "#fff";
-  }
+  const TEXT_RADIUS_FRAC_IDLE = 0.66;   // was ~0.72; smaller = closer to center
+  const TEXT_RADIUS_FRAC_HI   = 0.66;   // slightly farther out when highlighted (optional)
 
-  // Group values by color; supports single value or array of values per sector
-  function legendGroupsFromSectors(sectors) {
-    const map = new Map();
-    for (const s of sectors) {
-      const col = s.color;
-      const vals = Array.isArray(s.points) ? s.points : [s.points];
-      if (!map.has(col)) map.set(col, new Set());
-      const set = map.get(col);
-      vals.forEach(v => set.add(v));
+  const drawWedgeLabel = (w, highlight = false) => {
+    const text = w.label;
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.strokeStyle = "rgba(0,0,0,0.85)";
+    ctx.fillStyle = "#fff";
+
+    // pick a radius closer to the center so the text is vertically centered in the wedge
+    const rText = rad * (highlight ? TEXT_RADIUS_FRAC_HI : TEXT_RADIUS_FRAC_IDLE);
+
+    // auto-fit width along the chord at rText
+    const chord = 2 * rText * Math.sin(arc / 2);
+    const maxWidth = chord * 0.9;
+
+    const basePx = highlight ? 84 : 64;
+    let fontSize = basePx;
+    while (fontSize > 26) {
+      ctx.font = `${highlight ? "bolder" : "bold"} ${fontSize}px sans-serif`;
+      if (ctx.measureText(text).width <= maxWidth) break;
+      fontSize -= 2;
     }
-    // return [{color, values:[...sorted]}]
-    return Array.from(map.entries()).map(([color, set]) => ({
-      color,
-      values: Array.from(set).sort((a,b)=>a-b)
-    }));
-  }
 
-  function ensureLegendTopContainer() {
-    const host = document.getElementById("jspsych-canvas-button-response-stimulus");
-    if (!host) return null;
-    let el = document.getElementById("wheel-legend-top");
-    if (!el) {
-      host.insertAdjacentHTML("afterbegin", '<div id="wheel-legend-top" class="wheel-legend"></div>');
-      el = document.getElementById("wheel-legend-top");
-    }
-    return el;
-  }
-
-  function legendOrderIndices(tot, arc) {
-    // center angle of wedge i (in radians, Canvas coords, 0 at 3 o'clock, increasing clockwise)
-    const center = i => (i + 0.5) * arc;           // 0.5 puts you at wedge middle
-    const start = 3 * Math.PI / 4;                  // 135° = top-left anchor
-    // key increases clockwise from top-left
-    const key = theta => ( (theta - start) + 2*Math.PI ) % (2*Math.PI);
-    return Array.from({length: tot}, (_, i) => i)
-      .sort((a, b) => key(center(a)) - key(center(b)));
-  }
-
-  // NEW: render one blotch per wedge (keeps duplicates)
-  function renderLegend(sectors) {
-    const container = ensureLegendTopContainer();
-    if (!container) return;
-
-    const order = legendOrderIndices(sectors.length, arc);  // use geometry-based order
-    container.innerHTML = order.map((i) => {
-      const s = sectors[i];
-      const vals = Array.isArray(s.points) ? s.points : [s.points];
-      const text = vals.join(" / ");
-      const fg = contrastTextColor(s.color);
-      return `
-        <div class="legend-item"
-             data-idx="${i}"
-             data-color="${s.color}"
-             style="background:${s.color}; color:${fg};">
-          ${text}
-        </div>
-      `;
-    }).join("");
-  }
-
-  // OPTIONAL: highlight by *index* (so duplicates don't all light up)
-  function highlightLegendByIndex(idx) {
-    const items = document.querySelectorAll("#wheel-legend-top .legend-item");
-    items.forEach(it => {
-      it.classList.toggle("active", Number(it.getAttribute("data-idx")) === idx);
-    });
+    // draw centered at radius rText (negative y = outward along the current orientation)
+    ctx.strokeText(text, 0, -rText);
+    ctx.fillText(text, 0, -rText);
   };
 
-  function getPointerEl() {
-    return document.getElementById("spinUp");
-  }
 
-  function setPointerText(txt, opts = {}) {
-    const el = document.getElementById("spinUp");
-    if (!el) return;
-
-    // Text
-    el.textContent = txt == null ? "" : String(txt);
-
-    // Optional text size override
-    if (opts.fontSize) el.style.fontSize = opts.fontSize;
-
-    // Text color: default white so it pops on a colored core
-    el.style.color = opts.color || "black";
-
-    // Outer container background stays white
-    el.style.background = "#fff";
-
-    // Colored inner "core" using a BIG inset shadow that fills the box
-    // Keeps your white ring (4px) around it.
-    const core = opts.coreColor || opts.bg || null;
-    if (core) {
-      el.style.boxShadow =
-        `0 0 0 4px #fff,        /* white ring */ 
-         0 0 0 9999px ${core} inset`;  // solid inner core fill
-    } else {
-      // fallback: just the white ring, no fill
-      el.style.boxShadow = "0 0 0 4px #fff";
-    }
-  }
   /* --- NEW: helpers for multi-number wedges --- */
 
   const sampleOne = (arr) => arr[Math.floor(Math.random() * arr.length)];
@@ -309,20 +226,9 @@ const createSpinner = function(canvas, spinnerData, sectors, interactive) {
           currentAngle = oldAngle;
           let sectorIdx_real = getIndex();
           let sector = sectors[sectorIdx_real];
-          let points;
-          if (sector.points.length > 1) {
-            points = sampleOne(sector.points);
-          } else {
-            points = sector.points[0]
-          }
-          spinnerData.outcome_points.push(points);
-          spinnerData.outcome_wedge.push(sector.label);
-          spinnerData.outcome_color.push(sector.color);
-          updateScore(parseFloat(sector.label), sector.color);
-          setPointerText(`+${points}`, {
-            fontSize: "3rem",
-            //coreColor: sector.color  // <— fills inner core with the wedge color
-          });
+          let bonus = (Math.random() < sector.prob[0]);
+          spinnerData.outcome_bonus = bonus;
+          spinnerData.outcome_wedge = sector.label;
           drawSector(sectors, sectorIdx_real);
         };
       };
@@ -332,19 +238,6 @@ const createSpinner = function(canvas, spinnerData, sectors, interactive) {
 
   /* generate random float in range min-max */
   const rand = (m, M) => Math.random() * (M - m) + m;
-
-  const updateScore = (points, color) => {
-    spin_num--;
-    let s = 's';
-    spin_num == 1 ? s == '' : s == 's';
-    setTimeout(() => {
-      setPointerText("");
-      isSpinning = false;
-      drawSector(sectors, null);
-      onWheel ? canvas.style.cursor = "grab" : canvas.style.cursor = "";
-      if (!interactive && spinnerData.outcome_points.length < 5) { setTimeout(startAutoSpin, 225) };
-    }, 1500);
-  };
 
   const getIndex = () => {
     let normAngle = 0;
@@ -361,10 +254,11 @@ const createSpinner = function(canvas, spinnerData, sectors, interactive) {
   }
 
   //* Draw sectors and prizes texts to canvas */
-  const drawSector = (sectors, sector) => {
+  const drawSector = (sectors, sector, chosenPayout) => {
     for (let i = 0; i < sectors.length; i++) {
       const ang = arc * i;
       ctx.save();
+
       // fill
       ctx.beginPath();
       ctx.fillStyle = sectors[i].color;
@@ -372,14 +266,19 @@ const createSpinner = function(canvas, spinnerData, sectors, interactive) {
       ctx.arc(rad, rad, rad, ang, ang + arc);
       ctx.lineTo(rad, rad);
       ctx.fill();
-      // no text on the wedge
+
+      // text
+      ctx.translate(rad, rad);
+      const rotation = (arc/2) * (1 + 2*i) + Math.PI/2;
+      ctx.rotate(rotation);
+
+      const highlight = (isSpinning && i == sector);
+      drawWedgeLabel(sectors[i], highlight);
       ctx.restore();
     }
-
   };
 
   drawSector(sectors, null);
-  renderLegend(sectors);
 
   function startAutoSpin() {
     direction = (Math.random() < 0.5 ? 1 : -1);

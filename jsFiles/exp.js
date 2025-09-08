@@ -238,43 +238,19 @@ const exp = (function() {
     *
     */
 
+    const wedge_colors = jsPsych.randomization.repeat(["#1F77B4", "#D62728"], 1);
+
+
     const wedges = {
 
-        one:   { color:"#E41A1C", label:"1", points:[1] },   // blue
-        two:   { color:"#377EB8", label:"2", points:[2] },   // orange
-        three: { color:"#4DAF4A", label:"3", points:[3] },   // green
-        four:  { color:"#984EA3", label:"4", points:[4] },   // red
-        five:  { color:"#FF7F00", label:"5", points:[5] },   // purple
-        six:   { color:"#A65628", label:"6", points:[6] },   // brown
-        seven: { color:"#F781BF", label:"7", points:[7] },   // cyan
-        eight: { color:"#999999", label:"8", points:[8] },   // golden yellow (brighter than olive)
-        nine:  { color:"#66C2A5", label:"9", points:[9] },   // pink
+        sixty:   { color: wedge_colors[0], label:"60%", prob:[.6] },
+        fourty:  { color: wedge_colors[1], label:"40%", prob:[.4] },
 
-        one_three:   { color:"#E41A1C", label:"1_3", points:[1,3] },   // teal
-        five_seven:  { color:"#377EB8", label:"5_7", points:[5,7] },   // coral
-        two_four:    { color:"#4DAF4A", label:"2_4", points:[2,4] },   // bright blue (purer than #3A86FF)
-        six_eight:   { color:"#984EA3", label:"6_8", points:[6,8] },   // warm orange-tan (distinct from gold)
-        three_five:  { color:"#FF7F00", label:"3_5", points:[3,5] },   // deep purple
-        seven_nine:  { color:"#A65628", label:"7_9", points:[7,9] },   // green-teal (pushed more green than turquoise)
+        eighty:  { color: wedge_colors[0], label:"80%", prob:[.8] },
+        twenty:  { color: wedge_colors[1], label:"20%", prob:[.2] },
 
-        one_three_five:   { color:"#FFD92F", label:"1_3_5", points:[1,3,5] }, // indigo
-        one_three_seven:  { color:"#E7298A", label:"1_3_7", points:[1,3,7] }, // crimson
-        one_five_seven:   { color:"#1B9E77", label:"1_5_7", points:[1,5,7] }, // turquoise (lighter/brighter than teal/green-teal)
-        three_five_seven: { color:"#1B9E77", label:"3_5_7", points:[3,5,7] }, // turquoise (lighter/brighter than teal/green-teal)
-
-        two_four_six:   { color:"#FFD92F", label:"2_4_6", points:[2,4,6] }, // indigo
-        two_four_eight:  { color:"#E7298A", label:"2_4_8", points:[2,4,8] }, // crimson
-        two_six_eight:   { color:"#1B9E77", label:"2_6_8", points:[2,6,8] }, // turquoise (lighter/brighter than teal/green-teal)
-        four_six_eight: { color:"#1B9E77", label:"4_6_8", points:[4,6,8] }, // turquoise (lighter/brighter than teal/green-teal)
-
-        three_five_seven:   { color:"#FFD92F", label:"2_4_6", points:[3,5,7] }, // indigo
-        three_five_nine:  { color:"#E7298A", label:"2_4_8", points:[3,5,9] }, // crimson
-        three_seven_nine:   { color:"#1B9E77", label:"2_6_8", points:[3,7,9] }, // turquoise (lighter/brighter than teal/green-teal)
-        five_seven_nine: { color:"#1B9E77", label:"4_6_8", points:[5,7,9] }, // turquoise (lighter/brighter than teal/green-teal)
-
-        one_three_five_seven: { color:"#1B9E77", label:"1_3_5_7", points:[1,3,5,7] }, // turquoise (lighter/brighter than teal/green-teal)
-        two_four_six_eight: { color:"#1B9E77", label:"2_4_6_8", points:[2,4,6,8] }, // turquoise (lighter/brighter than teal/green-teal)
-        three_five_seven_nine: { color:"#1B9E77", label:"3_5_7_9", points:[3,5,7,9] }, // turquoise (lighter/brighter than teal/green-teal)
+        hundred:   { color: wedge_colors[0], label:"100%", prob:[1] },
+        zero:  { color: wedge_colors[1], label:"0%", prob:[0] },
     };
 
     const pairs = {
@@ -286,27 +262,18 @@ const exp = (function() {
     // define each wheel
     const wheels = [
 
-            {sectors: [ wedges.seven, wedges.one, wedges.three, wedges.five ],                                                                wheel_id: 1, ev: 4, sd: 2, mi: 2},
-            {sectors: [ wedges.eight, wedges.two, wedges.four, wedges.six ],                                                                  wheel_id: 2, ev: 5, sd: 2, mi: 2},
-            {sectors: [ wedges.nine, wedges.three, wedges.five, wedges.seven ],                                                               wheel_id: 3, ev: 6, sd: 2, mi: 2},
+            {sectors: [ wedges.sixty, wedges.fourty, wedges.sixty, wedges.fourty ],   wheel_id: 1, reward: 9, ev: 4.5, mi: 0.02904941},
+            {sectors: [ wedges.eighty, wedges.twenty, wedges.eighty, wedges.twenty ], wheel_id: 2, reward: 9, ev: 4.5, mi: 0.2780719},
+            {sectors: [ wedges.hundred, wedges.zero, wedges.hundred, wedges.zero ],   wheel_id: 3, reward: 9, ev: 4.5, mi: 1},
 
-            {sectors: [ wedges.five_seven, wedges.one_three, wedges.one_three, wedges.five_seven ],                                           wheel_id: 4, ev: 4, sd: 2, mi: 1},
-            {sectors: [ wedges.six_eight, wedges.two_four, wedges.two_four, wedges.six_eight ],                                               wheel_id: 5, ev: 5, sd: 2, mi: 1},
-            {sectors: [ wedges.seven_nine, wedges.three_five, wedges.three_five, wedges.seven_nine ],                                         wheel_id: 6, ev: 6, sd: 2, mi: 1},
+            {sectors: [ wedges.sixty, wedges.fourty, wedges.sixty, wedges.fourty ],   wheel_id: 4, reward: 7, ev: 3.5, mi: 0.02904941},
+            {sectors: [ wedges.eighty, wedges.twenty, wedges.eighty, wedges.twenty ], wheel_id: 5, reward: 7, ev: 3.5, mi: 0.2780719},
+            {sectors: [ wedges.hundred, wedges.zero, wedges.hundred, wedges.zero ],   wheel_id: 6, reward: 7, ev: 3.5, mi: 1},
 
-            {sectors: [ wedges.three_five_seven, wedges.one_three_five, wedges.one_three_seven, wedges.one_five_seven ],                      wheel_id: 7, ev: 4, sd: 2, mi: .42},
-            {sectors: [ wedges.four_six_eight, wedges.two_four_six, wedges.two_four_eight, wedges.two_six_eight ],                            wheel_id: 8, ev: 5, sd: 2, mi: .42},
-            {sectors: [ wedges.five_seven_nine, wedges.three_five_seven, wedges.three_five_nine, wedges.three_seven_nine  ],                  wheel_id: 9, ev: 6, sd: 2, mi: .42},
-
-            {sectors: [ wedges.one_three_five_seven, wedges.one_three_five_seven, wedges.one_three_five_seven, wedges.one_three_five_seven ], wheel_id: 10, ev: 4, sd: 2, mi: 0},
-            {sectors: [ wedges.two_four_six_eight, wedges.two_four_six_eight, wedges.two_four_six_eight, wedges.two_four_six_eight ],         wheel_id: 11, ev: 5, sd: 2, mi: 0},
-            {sectors: [ wedges.three_five_seven_nine, wedges.three_five_seven_nine, wedges.three_five_seven_nine, wedges.three_five_seven_nine ],  wheel_id: 12, ev: 6, sd: 2, mi: 0},
-
+            {sectors: [ wedges.sixty, wedges.fourty, wedges.sixty, wedges.fourty ],   wheel_id: 7, reward: 5, ev: 2.5, mi: 0.02904941},
+            {sectors: [ wedges.eighty, wedges.twenty, wedges.eighty, wedges.twenty ], wheel_id: 8, reward: 5, ev: 2.5, mi: 0.2780719},
+            {sectors: [ wedges.hundred, wedges.zero, wedges.hundred, wedges.zero ],   wheel_id: 9, reward: 5, ev: 2.5, mi: 1},
         ];
-
-    let WHEEL_COLORS = ["#377EB8", "#FF7F00", "#4DAF4A", "#984EA3"];
-
-    WHEEL_COLORS = jsPsych.randomization.repeat(WHEEL_COLORS, 1);
 
     let round = 1;  // track current round
 
@@ -316,6 +283,7 @@ const exp = (function() {
         el = document.createElement("div");
         el.id = "round-header";
         document.body.appendChild(el);
+        document.body.classList.add("has-round-header");   // ← add
       }
       return el;
     }
@@ -328,17 +296,39 @@ const exp = (function() {
     function removeRoundHeader() {
       const el = document.getElementById("round-header");
       if (el) el.remove();
+      document.body.classList.remove("has-round-header");  // ← remove
     }
+
+
+    const preSpin = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: function() {
+            let jackpot = jsPsych.timelineVariable('reward');
+            return `<div class="jackpot" style="--accent:#D62728">
+                      <span class="label">Round ${round} Jackpot:</span>
+                      <span class="amount"><strong>${jackpot} Tokens</strong></span>
+                    </div>`;
+
+        },
+        choices: "NO_KEYS",
+        trial_duration: 5000,
+        response_ends_trial: false,
+        data: {wheel_id: jsPsych.timelineVariable('wheel_id'), ev: jsPsych.timelineVariable('ev'), reward: jsPsych.timelineVariable('reward'), mi: jsPsych.timelineVariable('mi')},
+        on_start: function() {
+            setRoundHeader(round);
+        },
+        on_finish: function(data) {
+            data.round = round;
+        }
+    };
 
     const spin = {
         type: jsPsychCanvasButtonResponse,
         stimulus: function(c, spinnerData) {
-            const baseSectors = jsPsych.timelineVariable('sectors');
-            const sectorsWithFixedColors = baseSectors.map((s, i) => ({ ...s, color: WHEEL_COLORS[i % WHEEL_COLORS.length] }));
-            createSpinner(c, spinnerData, sectorsWithFixedColors, playBool);
+            createSpinner(c, spinnerData, jsPsych.timelineVariable('sectors'), playBool);
         },
         canvas_size: [500, 500],
-        data: {wheel_id: jsPsych.timelineVariable('wheel_id'), ev: jsPsych.timelineVariable('ev'), sd: jsPsych.timelineVariable('sd'), mi: jsPsych.timelineVariable('mi')},
+        data: {wheel_id: jsPsych.timelineVariable('wheel_id'), ev: jsPsych.timelineVariable('ev'), reward: jsPsych.timelineVariable('reward'), mi: jsPsych.timelineVariable('mi')},
         on_start: function() {
             setRoundHeader(round);
         },
@@ -351,20 +341,22 @@ const exp = (function() {
         type: jsPsychHtmlKeyboardResponse,
         stimulus: () => {
             const last = jsPsych.data.get().last(1).values()[0]; // spin trial
-            const pts = last.outcome_points;     // <-- awarded (reliability-adjusted)
-            const col = last.outcome_color;      // <-- matching color
-            return `
-                <div class="center">
-                    <div style="color:${col}; line-height:1.2">
-                        <div style="font-size:150px; font-weight:800;">+${pts}</div>
-                        <div style="font-size:80px; font-weight:600;">Tokens</div>
-                    </div>
-                </div>
-            `;
+            const reward = jsPsych.timelineVariable('reward');
+            if (last.outcome_bonus == true) {
+                return `<div class="payout" style="--accent: #2ecc71;">
+                          <span class="amount">+${reward}</span>
+                          <span class="unit">Tokens</span>
+                        </div>`;
+            } else {
+                return `<div class="payout-plain">
+                          <span class="amount">+0</span>
+                          <span class="unit">Tokens</span>
+                        </div>`;
+            };
         },
         choices: "NO_KEYS",
-        trial_duration: 1500,
-        data: {wheel_id: jsPsych.timelineVariable('wheel_id'), ev: jsPsych.timelineVariable('ev'), sd: jsPsych.timelineVariable('sd'), mi: jsPsych.timelineVariable('mi')},
+        trial_duration: 2000,
+        data: {wheel_id: jsPsych.timelineVariable('wheel_id'), ev: jsPsych.timelineVariable('ev'), reward: jsPsych.timelineVariable('reward'), mi: jsPsych.timelineVariable('mi')},
         on_start: function() {
             setRoundHeader(round);
         },
@@ -386,7 +378,7 @@ const exp = (function() {
         },
         randomize_question_order: false,
         scale_width: 600,
-        data: {wheel_id: jsPsych.timelineVariable('wheel_id'), ev: jsPsych.timelineVariable('ev'), sd: jsPsych.timelineVariable('sd'), mi: jsPsych.timelineVariable('mi')},
+        data: {wheel_id: jsPsych.timelineVariable('wheel_id'), ev: jsPsych.timelineVariable('ev'), reward: jsPsych.timelineVariable('reward'), mi: jsPsych.timelineVariable('mi')},
         on_finish: function(data) {
             data.round = round;
             saveSurveyData(data);
@@ -406,7 +398,7 @@ const exp = (function() {
             },
         ],
         scale_width: 500,
-        data: {wheel_id: jsPsych.timelineVariable('wheel_id'), ev: jsPsych.timelineVariable('ev'), sd: jsPsych.timelineVariable('sd'), mi: jsPsych.timelineVariable('mi')},
+        data: {wheel_id: jsPsych.timelineVariable('wheel_id'), ev: jsPsych.timelineVariable('ev'), reward: jsPsych.timelineVariable('reward'), mi: jsPsych.timelineVariable('mi')},
         on_finish: (data) => {
             data.round = round;
             saveSurveyData(data);
@@ -414,9 +406,14 @@ const exp = (function() {
         },
     };
 
+    const spinLoop = {
+        timeline: [spin, feedback],
+        repetitions: 5,
+    }
+
     // timeline: main task
     p.task = {
-        timeline: [spin, flowMeasure, happinessMeasure],
+        timeline: [preSpin, spinLoop, flowMeasure, happinessMeasure],
         repetitions: 1,
         timeline_variables: wheels,
         randomize_order: true,
@@ -508,6 +505,6 @@ const exp = (function() {
 
 }());
 
-const timeline = [exp.consent, exp.instLoop, exp.postIntro, exp.task, exp.demographics, exp.save_data];
+const timeline = [exp.task, exp.consent, exp.instLoop, exp.postIntro, exp.task, exp.demographics, exp.save_data];
 
 jsPsych.run(timeline);
