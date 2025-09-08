@@ -120,8 +120,7 @@ const exp = (function() {
             </div>`,
 
             `<div class='parent'>
-                <p>You'll complete 12 rounds of Wheel of Fortune.</p>
-                <p>Each round will feature a different wheel.</p>
+                <p>You'll complete 9 rounds of Wheel of Fortune.</p>
                 <p>After each round, you'll answer questions about your feelings: You'll report how <strong>immersed and engaged</strong> you felt during the last round,
                 as well as how <strong>happy</strong> you currently feel.</p>
             </div>`,     
