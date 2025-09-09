@@ -271,16 +271,16 @@ const exp = (function() {
     const wheels = [
 
             {sectors: [ wedges.sixty, wedges.fourty, wedges.sixty, wedges.fourty ],   wheel_id: 1, reward: 9, ev: 4.5, mi: 0.02904941},
-            {sectors: [ wedges.eighty, wedges.twenty, wedges.eighty, wedges.twenty ], wheel_id: 2, reward: 9, ev: 4.5, mi: 0.2780719},
-            {sectors: [ wedges.hundred, wedges.zero, wedges.hundred, wedges.zero ],   wheel_id: 3, reward: 9, ev: 4.5, mi: 1},
+            {sectors: [ wedges.eighty, wedges.twenty, wedges.eighty, wedges.twenty ], wheel_id: 2, reward: 9, ev: 4.5, mi: 0.1887219},
+            {sectors: [ wedges.hundred, wedges.zero, wedges.hundred, wedges.zero ],   wheel_id: 3, reward: 9, ev: 4.5, mi: 0.5310044},
 
             {sectors: [ wedges.sixty, wedges.fourty, wedges.sixty, wedges.fourty ],   wheel_id: 4, reward: 7, ev: 3.5, mi: 0.02904941},
-            {sectors: [ wedges.eighty, wedges.twenty, wedges.eighty, wedges.twenty ], wheel_id: 5, reward: 7, ev: 3.5, mi: 0.2780719},
-            {sectors: [ wedges.hundred, wedges.zero, wedges.hundred, wedges.zero ],   wheel_id: 6, reward: 7, ev: 3.5, mi: 1},
+            {sectors: [ wedges.eighty, wedges.twenty, wedges.eighty, wedges.twenty ], wheel_id: 5, reward: 7, ev: 3.5, mi: 0.1887219},
+            {sectors: [ wedges.hundred, wedges.zero, wedges.hundred, wedges.zero ],   wheel_id: 6, reward: 7, ev: 3.5, mi: 0.5310044},
 
             {sectors: [ wedges.sixty, wedges.fourty, wedges.sixty, wedges.fourty ],   wheel_id: 7, reward: 5, ev: 2.5, mi: 0.02904941},
-            {sectors: [ wedges.eighty, wedges.twenty, wedges.eighty, wedges.twenty ], wheel_id: 8, reward: 5, ev: 2.5, mi: 0.2780719},
-            {sectors: [ wedges.hundred, wedges.zero, wedges.hundred, wedges.zero ],   wheel_id: 9, reward: 5, ev: 2.5, mi: 1},
+            {sectors: [ wedges.eighty, wedges.twenty, wedges.eighty, wedges.twenty ], wheel_id: 8, reward: 5, ev: 2.5, mi: 0.1887219},
+            {sectors: [ wedges.hundred, wedges.zero, wedges.hundred, wedges.zero ],   wheel_id: 9, reward: 5, ev: 2.5, mi: 0.5310044},
         ];
 
     let round = 1;  // track current round
