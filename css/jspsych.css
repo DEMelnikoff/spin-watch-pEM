@@ -662,7 +662,7 @@
   transform: translateX(-50%);
 
   /* place arrow relative to box height */
-  top: calc(-45% - 10px);  /* exactly one box height above + small gap */
+  top: calc(-44% - 10px);  /* exactly one box height above + small gap */
 
   border: 38px solid transparent;
   border-bottom-color: white;
