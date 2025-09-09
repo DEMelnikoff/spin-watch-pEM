@@ -72,22 +72,22 @@ const exp = (function() {
             </div>`,
 
             `<div class='parent'>
-                <p>If a wheel lands on 80%, you'll have an 80% chance of winning a jackpot.</p>
+                <p>If a wheel lands on 75%, you'll have an 75% chance of winning a jackpot.</p>
                 <img src="./img/mediumMI-activated1.png" style="width:70%; height:70%">
             </div>`,
 
             `<div class='parent'>
-                <p>If a wheel lands on 20%, you'll have a 20% chance of winning a jackpot.</p>
+                <p>If a wheel lands on 25%, you'll have a 25% chance of winning a jackpot.</p>
                 <img src="./img/mediumMI-activated0.png" style="width:70%; height:70%">
             </div>`,
 
             `<div class='parent'>
-                <p>If a wheel lands on 100%, you'll have a 100% chance of winning a jackpot.</p>
+                <p>If a wheel lands on 90%, you'll have a 90% chance of winning a jackpot.</p>
                 <img src="./img/highMI-activated1.png" style="width:70%; height:70%">
             </div>`,
 
             `<div class='parent'>
-                <p>If a wheel lands on 0%, you'll have a 0% chance of winning a jackpot.</p>
+                <p>If a wheel lands on 10%, you'll have a 10% chance of winning a jackpot.</p>
                 <img src="./img/highMI-activated0.png" style="width:70%; height:70%">
             </div>`,
 
@@ -172,7 +172,7 @@ const exp = (function() {
         allow_keys: false,
     };
 
-    let correctAnswers = ["I'll have a 100% chance of winning a jackpot.", "I'll have an 80% chance of winning a jackpot.", "I'll have a 20% chance of winning a jackpot.", "I'll have a 0% chance of winning a jackpot."];
+    let correctAnswers = ["I'll have a 90% chance of winning a jackpot.", "I'll have a 60% chance of winning a jackpot.", "I'll have a 40% chance of winning a jackpot.", "I'll have a 10% chance of winning a jackpot."];
 
     const errorMessage = {
         type: jsPsychInstructions,
@@ -188,24 +188,24 @@ const exp = (function() {
             </div>`,
         questions: [
             {
-                prompt: `What happens if a wheel lands on 100%?`, 
+                prompt: `What happens if a wheel lands on 90%?`, 
                 name: `attnChk1`, 
-                options: ["I'll have a 100% chance of winning a jackpot.", "I'll have an 80% chance of winning a jackpot.", "I'll have a 20% chance of winning a jackpot.", "I'll have a 0% chance of winning a jackpot."],
+                options: ["I'll have a 90% chance of winning a jackpot.", "I'll have a 60% chance of winning a jackpot.", "I'll have a 40% chance of winning a jackpot.", "I'll have a 10% chance of winning a jackpot."],
             },
             {
-                prompt: `What happens if a wheel lands on 80%?`, 
+                prompt: `What happens if a wheel lands on 60%?`, 
                 name: `attnChk2`, 
-                options: ["I'll have a 100% chance of winning a jackpot.", "I'll have an 80% chance of winning a jackpot.", "I'll have a 20% chance of winning a jackpot.", "I'll have a 0% chance of winning a jackpot."],
+                options: ["I'll have a 90% chance of winning a jackpot.", "I'll have a 60% chance of winning a jackpot.", "I'll have a 40% chance of winning a jackpot.", "I'll have a 10% chance of winning a jackpot."],
             },
             {
-                prompt: `What happens if a wheel lands on 20%?`, 
+                prompt: `What happens if a wheel lands on 40%?`, 
                 name: `attnCh3`, 
-                options: ["I'll have a 100% chance of winning a jackpot.", "I'll have an 80% chance of winning a jackpot.", "I'll have a 20% chance of winning a jackpot.", "I'll have a 0% chance of winning a jackpot."],
+                options: ["I'll have a 90% chance of winning a jackpot.", "I'll have a 60% chance of winning a jackpot.", "I'll have a 40% chance of winning a jackpot.", "I'll have a 10% chance of winning a jackpot."],
             },
             {
-                prompt: `What happens if a wheel lands on 0%?`, 
+                prompt: `What happens if a wheel lands on 10%?`, 
                 name: `attnCh4`, 
-                options: ["I'll have a 100% chance of winning a jackpot.", "I'll have an 80% chance of winning a jackpot.", "I'll have a 20% chance of winning a jackpot.", "I'll have a 0% chance of winning a jackpot."],
+                options: ["I'll have a 90% chance of winning a jackpot.", "I'll have a 60% chance of winning a jackpot.", "I'll have a 40% chance of winning a jackpot.", "I'll have a 10% chance of winning a jackpot."],
             },
         ],
         scale_width: 500,
@@ -254,11 +254,11 @@ const exp = (function() {
         sixty:   { color: wedge_colors[0], label:"60%", prob:[.6] },
         fourty:  { color: wedge_colors[1], label:"40%", prob:[.4] },
 
-        eighty:  { color: wedge_colors[0], label:"80%", prob:[.8] },
-        twenty:  { color: wedge_colors[1], label:"20%", prob:[.2] },
+        eighty:  { color: wedge_colors[0], label:"75%", prob:[.75] },
+        twenty:  { color: wedge_colors[1], label:"25%", prob:[.25] },
 
-        hundred:   { color: wedge_colors[0], label:"100%", prob:[1] },
-        zero:  { color: wedge_colors[1], label:"0%", prob:[0] },
+        hundred:   { color: wedge_colors[0], label:"90%", prob:[.9] },
+        zero:  { color: wedge_colors[1], label:"10%", prob:[.1] },
     };
 
     const pairs = {
@@ -504,7 +504,7 @@ const exp = (function() {
     p.save_data = {
         type: jsPsychPipe,
         action: "save",
-        experiment_id: "9E2vdawmDiFE",
+        experiment_id: "pRMhp2O0m8Aq",
         filename: filename,
         data_string: ()=>jsPsych.data.get().csv()
     };
