@@ -72,7 +72,7 @@ const exp = (function() {
             </div>`,
 
             `<div class='parent'>
-                <p>If a wheel lands on 75%, you'll have an 75% chance of winning a jackpot.</p>
+                <p>If a wheel lands on 75%, you'll have a 75% chance of winning a jackpot.</p>
                 <img src="./img/mediumMI-activated1.png" style="width:70%; height:70%">
             </div>`,
 
