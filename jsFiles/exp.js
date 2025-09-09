@@ -28,8 +28,8 @@ const exp = (function() {
         welcome_play: [
             `<div class='parent'>
                 <p><strong>Welcome to Wheel of Fortune!</strong></p>
-                <p>In Wheel of Fortune, you'll spin a series of prize wheels.</p>
-                <p>With each spin, you'll have a chance of earning tokens.</p>
+                <p>In Wheel of Fortune, you'll play a series of roulette wheels.</p>
+                <p>By playing the wheels, you'll have a chance of earning tokens.</p>
                 <p>Your goal is to earn as many tokens as possible!</p>
             </div>`,
         ],
@@ -37,8 +37,8 @@ const exp = (function() {
         welcome_watch: [
             `<div class='parent'>
                 <p><strong>Welcome to Wheel of Fortune!</strong></p>
-                <p>In Wheel of Fortune, you'll observe a series of spinning prize wheels.</p>
-                <p>Each time a prize wheel spins, you'll have a chance of earning tokens.</p>
+                <p>In Wheel of Fortune, you'll observe a series of roulette wheels.</p>
+                <p>While observing the wheels, you'll have a chance of earning tokens.</p>
                 <p>Your goal is to earn as many tokens as possible!</p>
             </div>`,
         ],
@@ -62,7 +62,7 @@ const exp = (function() {
             </div>`,
 
             `<div class='parent'>
-                <p>To win jackpots, you'll spin wheels like this:</p>
+                <p>Jackpots are won with roulette wheels like this:</p>
                 <img src="./img/mediumMI.png" style="width:70%; height:70%">
             </div>`,
 
@@ -114,14 +114,15 @@ const exp = (function() {
 
         how_to_spin_play: [
             `<div class='parent'>
-                <p>To spin a prize wheel, just grab it with your cursor and give it a spin!
-                <br>Watch the animation below to see how it's done.</p>
-                <img src="./img/spin-${play}-gif.gif" style="width:60%; height:60%">
+                <p>The roulette wheel will begin spinning automatically. As it speeds up, it will start to <strong>glow</strong>. 
+                When the wheel is glowing, you can press the <strong>SPACEBAR</strong> at any time to stop it.</p>
+                <p>Watch the animation below for an example:</p>
+                <img src="./img/spin-vid.gif" style="width:60%; height:60%">
             </div>`,
 
             `<div class='parent'>
                 <p>You'll complete 9 rounds of Wheel of Fortune.</p>
-                <p>After each round, you'll answer questions about your feelings: You'll report how <strong>immersed and engaged</strong> you felt during the last round,
+                <p>After each round, you'll answer questions about your feelings: How <strong>immersed and engaged</strong> you felt during the last round,
                 as well as how <strong>happy</strong> you currently feel.</p>
             </div>`,     
 
@@ -133,14 +134,15 @@ const exp = (function() {
 
         how_to_spin_watch: [
             `<div class='parent'>
-                <p>Each prize wheel spins automatically.
-                <br>Watch the animation below to see an example.</p>
-                <img src="./img/spin-${play}-gif.gif" style="width:60%; height:60%">
+                <p>The roulette wheel will begin spinning automatically. As it speeds up, it will start to <strong>glow</strong>. 
+                When the wheel is glowing, it will stop automatically at a random moment.</p>
+                <p>Watch the animation below for an example:</p>
+                <img src="./img/spin-vid.gif" style="width:60%; height:60%">
             </div>`,
 
             `<div class='parent'>
                 <p>You'll complete 9 rounds of Wheel of Fortune.</p>
-                <p>After each round, you'll answer questions about your feelings: You'll report how <strong>immersed and engaged</strong> you felt during the last round,
+                <p>After each round, you'll answer questions about your feelings: How <strong>immersed and engaged</strong> you felt during the last round,
                 as well as how <strong>happy</strong> you currently feel.</p>
             </div>`,            
 
@@ -416,7 +418,7 @@ const exp = (function() {
 
     const spinLoop = {
         timeline: [spin, feedback],
-        repetitions: 5,
+        repetitions: 10,
     }
 
     // timeline: main task
@@ -504,7 +506,7 @@ const exp = (function() {
     p.save_data = {
         type: jsPsychPipe,
         action: "save",
-        experiment_id: "pRMhp2O0m8Aq",
+        experiment_id: "lDhjDg5iLJYH",
         filename: filename,
         data_string: ()=>jsPsych.data.get().csv()
     };

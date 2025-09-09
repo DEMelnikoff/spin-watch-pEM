@@ -828,6 +828,17 @@
   margin-bottom: 100px;                 /* default text color */
 }
 
+.wheel-stage.ready canvas,
+.wheel-stage.ready #jspsych-canvas-stimulus {
+  border-radius: 50%;
+  border: 6px solid #ffd700; /* solid gold border */
+  box-shadow:
+    0 0 20px 8px rgba(255, 215, 0, 0.9),   /* bright outer glow */
+    0 0 40px 16px rgba(255, 165, 0, 0.7),  /* warm orange layer */
+    0 0 60px 24px rgba(255, 255, 0, 0.5);  /* diffuse yellow halo */
+  transition: box-shadow 0.3s ease, border 0.3s ease;
+}
+
 .wheel-legend .legend-item {
   min-width: 84px;
   padding: 10px 14px;

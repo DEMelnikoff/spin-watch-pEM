@@ -46,220 +46,94 @@ const getTotalErrors = (data, correctAnswers) => {
     return totalErrors;
 };
 
-const createSpinner = function(canvas, spinnerData, sectors, interactive) {
+const createSpinner = function (canvas, spinnerData, sectors, interactive = true) {
+  const ctx = canvas.getContext("2d");
 
-  /* get context */
-  const ctx = canvas.getContext("2d"); 
-
-  const TEXT_RADIUS_FRAC_IDLE = 0.66;   // was ~0.72; smaller = closer to center
-  const TEXT_RADIUS_FRAC_HI   = 0.66;   // slightly farther out when highlighted (optional)
-
-  const drawWedgeLabel = (w, highlight = false) => {
+  // --- label drawing ---
+  const TEXT_RADIUS_FRAC = 0.66;
+  const drawWedgeLabel = (w, highlight = false, rad, arc) => {
     const text = w.label;
-
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.strokeStyle = "rgba(0,0,0,0.85)";
     ctx.fillStyle = "#fff";
 
-    // pick a radius closer to the center so the text is vertically centered in the wedge
-    const rText = rad * (highlight ? TEXT_RADIUS_FRAC_HI : TEXT_RADIUS_FRAC_IDLE);
-
-    // auto-fit width along the chord at rText
+    const rText = rad * TEXT_RADIUS_FRAC;
     const chord = 2 * rText * Math.sin(arc / 2);
     const maxWidth = chord * 0.9;
 
-    const basePx = highlight ? 84 : 64;
-    let fontSize = basePx;
+    let fontSize = highlight ? 84 : 64;
     while (fontSize > 26) {
       ctx.font = `${highlight ? "bolder" : "bold"} ${fontSize}px sans-serif`;
       if (ctx.measureText(text).width <= maxWidth) break;
       fontSize -= 2;
     }
-
-    // draw centered at radius rText (negative y = outward along the current orientation)
     ctx.strokeText(text, 0, -rText);
     ctx.fillText(text, 0, -rText);
   };
 
+  // --- geometry ---
+  let rect = canvas.getBoundingClientRect();
+  let wheelWidth = rect.width;
+  let wheelHeight = rect.height;
+  let rad = wheelWidth / 2;
+  const tot = sectors.length;
+  const arc = (2 * Math.PI) / tot;
 
-  /* --- NEW: helpers for multi-number wedges --- */
+  function resize() {
+    rect = canvas.getBoundingClientRect();
+    wheelWidth = rect.width;
+    wheelHeight = rect.height;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(wheelWidth * dpr);
+    canvas.height = Math.round(wheelHeight * dpr);
+    canvas.style.width = `${wheelWidth}px`;
+    canvas.style.height = `${wheelHeight}px`;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    rad = Math.min(wheelWidth, wheelHeight) / 2;
+    drawSector(sectors, null);
+  }
 
-  const sampleOne = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  // --- state ---
+  let currentAngle = 0;     // degrees
+  let speed = 0;            // deg/frame (~60fps)
+  let animId = null;
+  let phase = "pause";      // "pause" -> "ramp" -> "ready" -> "stopped"
+  let direction = Math.random() < 0.5 ? 1 : -1;
 
-  /* get wheel properties */
-  let wheelWidth = canvas.getBoundingClientRect()['width'];
-  let wheelHeight = canvas.getBoundingClientRect()['height'];
-  let wheelX = canvas.getBoundingClientRect()['x'] + wheelWidth / 2;
-  let wheelY = canvas.getBoundingClientRect()['y'] + wheelHeight / 2;
-  const tot = sectors.length; // total number of sectors
-  const rad = wheelWidth / 2; // radius of wheel
-  const PI = Math.PI;
-  const arc = (2 * PI) / tot; // arc sizes in radians
+  const START_PAUSE_MS = 900;
+  let pauseUntil = 0;
 
-  /* spin dynamics */
-  const friction = 0.975;  // 0.995=soft, 0.99=mid, 0.98=hard
-  const angVelMin = 5; // Below that number will be treated as a stop
-  let angVelMax = 0; // Random ang.vel. to acceletare to 
-  let angVel = 0;    // Current angular velocity
+  const READY_SPEED = 40;
+  const MAX_SPEED = 45;
+  const GROWTH = Math.log(1.06) * 30;
+  const FRICTION = 1.0;
 
-  /* state variables */
-  let isGrabbed = false;       // true when wheel is grabbed, false otherwise
-  let isDragging = false;      // true when wheel is being dragged, false otherwise
-  let isSpinning = false;      // true when wheel is spinning, false otherwise
-  let isAccelerating = false;  // true when wheel is accelerating, false otherwise
-  let lastAngles = [0,0,0];    // store the last three angles
-  let correctSpeed = [0]       // speed corrected for 360-degree limit
-  let startAngle = null;       // angle of grab
-  let oldAngle = 0;            // wheel angle prior to last perturbation
-  let oldAngle_corrected;
-  let currentAngle = null;     // wheel angle after last perturbation
-  let onWheel = false;         // true when cursor is on wheel, false otherwise
-  let spin_num = 5             // number of spins
-  let direction;
-  let animId = null;          // current requestAnimationFrame handle
+  // observe-mode auto stop delay (after "ready")
+  const AUTO_STOP_MIN_MS = 300;
+  const AUTO_STOP_MAX_MS = 3000;
+  let autoStopTimer = null;
 
-  let loseSpeed = 37
-
-  /* define spinning functions */
-
-  const onGrab = (x, y) => {
-    if (!isSpinning) {
-      canvas.style.cursor = "grabbing";
-      isGrabbed = true;
-      startAngle = calculateAngle(x, y);
-    };
-  };
-
-  const calculateAngle =  (currentX, currentY) => {
-    let xLength = currentX - wheelX;
-    let yLength = currentY - wheelY;
-    let angle = Math.atan2(xLength, yLength) * (180/Math.PI);
-    return 360 - angle;
-  };
-
-  const onMove = (x, y) => {
-    if(isGrabbed) {
-      canvas.style.cursor = "grabbing";
-      isDragging = true;
-    };
-    if(!isDragging)
-      return
-    lastAngles.shift();
-    let deltaAngle = calculateAngle(x, y) - startAngle;
-    currentAngle = deltaAngle + oldAngle;
-    lastAngles.push(currentAngle);
-    let speed = lastAngles[2] - lastAngles[0];
-    if (Math.abs(speed) < 200) {
-      correctSpeed.shift();
-      correctSpeed.push(speed);
-    };
-    render(currentAngle);
-  };
-
-  const render = (deg) => {
-    canvas.style.transform = `rotate(${deg}deg)`;
-  };
-
-
-  const onRelease = function() {
-    isGrabbed = false;
-    if(isDragging){
-      isDragging = false;
-      oldAngle = currentAngle;
-      let speed = correctSpeed[0];
-      if (Math.abs(speed) > angVelMin) {
-        direction = (speed > 0) ? 1 : -1;
-        isAccelerating = true;
-        isSpinning = true;
-        angVelMax = rand(25, 50);
-        giveMoment(speed)
-      };
-    };   
-  };
-
-  const giveMoment = function(initialSpeed) {
-
-    let speed = initialSpeed;
-    let lastTimestamp = null;
-
-    function step(timestamp) {
-      if (!lastTimestamp) lastTimestamp = timestamp;
-      const deltaTime = (timestamp - lastTimestamp) / 1000; // seconds
-      lastTimestamp = timestamp;
-
-
-      if (Math.abs(speed) >= angVelMax) isAccelerating = false;
-
-      let liveSector = sectors[getIndex(oldAngle)];
-      oldAngle_corrected = (oldAngle < 0) ? 360 + (oldAngle % 360) : oldAngle % 360;
-
-      // accelerate
-      if (isAccelerating) {
-        let growthRate = Math.log(1.06) * 60;
-        speed *= Math.exp(growthRate * deltaTime);
-        animId = requestAnimationFrame(step);
-        oldAngle += speed * deltaTime * 60;
-        lastAngles.shift();
-        lastAngles.push(oldAngle);
-        render(oldAngle);
-      }
-      
-      // decelerate and stop
-      else {
-        let decayRate = Math.log(friction) * 60; // friction < 1, so log is negative
-        isAccelerating = false;
-        speed *= Math.exp(decayRate * deltaTime); // Exponential decay
-        animId = requestAnimationFrame(step);
-        if (Math.abs(speed) > angVelMin * .1) {
-          oldAngle += speed * deltaTime * 60;
-          lastAngles.shift();
-          lastAngles.push(oldAngle);
-          render(oldAngle);       
-        } else {
-          // stop spinner
-          speed = 0;
-          if (animId !== null) {
-            cancelAnimationFrame(animId);
-            animId = null;
-          };
-          currentAngle = oldAngle;
-          let sectorIdx_real = getIndex();
-          let sector = sectors[sectorIdx_real];
-          let bonus = (Math.random() < sector.prob[0]);
-          spinnerData.outcome_bonus = bonus;
-          spinnerData.outcome_wedge = sector.label;
-          drawSector(sectors, sectorIdx_real);
-        };
-      };
-    };
-    animId = requestAnimationFrame(step);
-  };
-
-  /* generate random float in range min-max */
-  const rand = (m, M) => Math.random() * (M - m) + m;
+  const render = (deg) => { canvas.style.transform = `rotate(${deg}deg)`; };
 
   const getIndex = () => {
     let normAngle = 0;
     let modAngle = currentAngle % 360;
     if (modAngle > 270) {
       normAngle = 360 - modAngle + 270;
-    } else if (modAngle < -90) { 
-      normAngle =  -modAngle - 90;
+    } else if (modAngle < -90) {
+      normAngle = -modAngle - 90;
     } else {
       normAngle = 270 - modAngle;
     }
-    let sector = Math.floor(normAngle / (360 / tot))
-    return sector
-  }
+    return Math.floor(normAngle / (360 / tot));
+  };
 
-  //* Draw sectors and prizes texts to canvas */
-  const drawSector = (sectors, sector, chosenPayout) => {
+  const drawSector = (sectors, hiIdx) => {
+    ctx.clearRect(0, 0, wheelWidth, wheelHeight);
     for (let i = 0; i < sectors.length; i++) {
       const ang = arc * i;
       ctx.save();
-
-      // fill
       ctx.beginPath();
       ctx.fillStyle = sectors[i].color;
       ctx.moveTo(rad, rad);
@@ -267,51 +141,102 @@ const createSpinner = function(canvas, spinnerData, sectors, interactive) {
       ctx.lineTo(rad, rad);
       ctx.fill();
 
-      // text
       ctx.translate(rad, rad);
-      const rotation = (arc/2) * (1 + 2*i) + Math.PI/2;
+      const rotation = (arc / 2) * (1 + 2 * i) + Math.PI / 2;
       ctx.rotate(rotation);
 
-      const highlight = (isSpinning && i == sector);
-      drawWedgeLabel(sectors[i], highlight);
+      drawWedgeLabel(sectors[i], hiIdx === i, rad, arc);
       ctx.restore();
     }
   };
 
+  function setReadyGlow(on) {
+    const stage = canvas.closest(".wheel-stage") || canvas.parentElement;
+    if (!stage) return;
+    stage.classList.toggle("ready", !!on);
+  }
+
+  function randMs(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function stopNow() {
+    if (phase === "stopped") return;
+    phase = "stopped";
+    if (animId) { cancelAnimationFrame(animId); animId = null; }
+    if (autoStopTimer) { clearTimeout(autoStopTimer); autoStopTimer = null; }
+    setReadyGlow(false);
+
+    const sectorIdx = getIndex();
+    const sector = sectors[sectorIdx];
+
+    const bonus = Math.random() < sector.prob[0];
+    spinnerData.outcome_bonus = bonus;
+    spinnerData.outcome_wedge = sector.label;
+
+    drawSector(sectors, sectorIdx);
+  }
+
+  function step(ts) {
+    if (phase === "pause") {
+      if (ts >= pauseUntil) {
+        phase = "ramp";
+        speed = direction * 4;  // gentle start
+      } else {
+        animId = requestAnimationFrame(step);
+        return;
+      }
+    }
+
+    if (phase === "ramp") {
+      speed = Math.min(MAX_SPEED, speed * Math.exp(GROWTH / 60) || (direction * 4));
+      if (Math.abs(speed) >= READY_SPEED) {
+        phase = "ready";
+        setReadyGlow(true);
+        // hold steady fast speed
+        speed = direction * Math.min(MAX_SPEED, Math.max(READY_SPEED, Math.abs(speed)));
+
+        // In observe mode, schedule an automatic stop
+        if (!interactive) {
+          autoStopTimer = setTimeout(stopNow, randMs(AUTO_STOP_MIN_MS, AUTO_STOP_MAX_MS));
+        }
+      }
+    } else if (phase === "ready") {
+      speed *= FRICTION;
+    } else if (phase === "stopped") {
+      return;
+    }
+
+    currentAngle += speed;
+    render(currentAngle);
+    animId = requestAnimationFrame(step);
+  }
+
+  function onKeyDown(e) {
+    if (!interactive) return;                 // ignore keys in observe mode
+    if (e.code !== "Space" && e.keyCode !== 32) return;
+    if (phase !== "ready") return;            // only when glowing
+    e.preventDefault();
+    stopNow();
+  }
+
+  // setup
+  resize();
   drawSector(sectors, null);
+  window.addEventListener("resize", resize);
+  if (interactive) window.addEventListener("keydown", onKeyDown);
 
-  function startAutoSpin() {
-    direction = (Math.random() < 0.5 ? 1 : -1);
-    isAccelerating = true;
-    isSpinning = true;
-    angVelMax = rand(25, 50);                   
-    let initialSpeed = direction * rand(8, 15);
-    giveMoment(initialSpeed);
+  // start paused, then run
+  pauseUntil = performance.now() + START_PAUSE_MS;
+  animId = requestAnimationFrame(step);
+
+  return {
+    destroy() {
+      if (animId) cancelAnimationFrame(animId);
+      if (autoStopTimer) clearTimeout(autoStopTimer);
+      window.removeEventListener("resize", resize);
+      if (interactive) window.removeEventListener("keydown", onKeyDown);
+      setReadyGlow(false);
+    }
   };
-
-  if (interactive) {
-    /* add event listners */
-    canvas.addEventListener('mousedown', function(e) {
-        if (onWheel) { onGrab(e.clientX, e.clientY) };
-    });
-
-    canvas.addEventListener('mousemove', function(e) {
-        let dist = Math.sqrt( (wheelX - e.clientX)**2 + (wheelY - e.clientY)**2 );
-        dist < rad ? onWheel = true : onWheel = false;
-        onWheel && !isGrabbed && !isSpinning ? canvas.style.cursor = "grab" : canvas.style.cursor = "";
-        if(isGrabbed && onWheel) { onMove(e.clientX, e.clientY) };
-    });
-
-    window.addEventListener('mouseup', onRelease);
-  } else {
-    setTimeout(startAutoSpin, 1000);
-  };
-
-  window.addEventListener('resize', function(event) {
-    wheelWidth = canvas.getBoundingClientRect()['width'];
-    wheelHeight = canvas.getBoundingClientRect()['height'];
-    wheelX = canvas.getBoundingClientRect()['x'] + wheelWidth / 2;
-    wheelY = canvas.getBoundingClientRect()['y'] + wheelHeight / 2;
-  }, true);
-
 };
