@@ -266,7 +266,7 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reliability,
       pointer.innerHTML = label;
       onWheel ? canvas.style.cursor = "grab" : canvas.style.cursor = "";
       if (!interactive && spinnerData.outcomes_points.length < 12) { setTimeout(startAutoSpin, 1000) };
-    }, 1250);
+    }, 1000);
   };
 
   const getIndex = () => {
