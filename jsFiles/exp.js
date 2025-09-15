@@ -232,6 +232,9 @@ const exp = (function() {
 
     // tiny helper for consistency + fewer typos
 
+    let colors = ["#06D6A0", "#EF476F", "#F4D35E", "#6A9FB5", "#EE964B", "#736CED"];
+
+    colors = jsPsych.randomization.repeat(colors, 1);
 
     function makeWedge({ name, color, font = 'white', inner, outer }) {
       return {
@@ -247,61 +250,61 @@ const exp = (function() {
     const wedges = {
       one_seven: makeWedge({
         name: 'one_seven',
-        color: "#06D6A0",
+        color: colors[0],
         inner: { label: "1",  points: 1 },   // inner pays 2
         outer: { label: "7",  points: 7 },   // outer pays 1
       }),
       three_five: makeWedge({
         name: 'three_five',
-        color: "#EF476F",
+        color: colors[1],
         inner: { label: "3",  points: 3 },
         outer: { label: "5",  points: 5 },
       }),
       five_eleven: makeWedge({
         name: 'five_eleven',
-        color: "#F4D35E",
+        color: colors[2],
         inner: { label: "5",  points: 5 },
         outer: { label: "11", points: 11 },
       }),
       seven_nine: makeWedge({
         name: 'seven_nine',
-        color: "#6A9FB5",
+        color: colors[3],
         inner: { label: "7", points: 7 },
         outer: { label: "9",  points: 9  },
       }),
       one: makeWedge({
         name: 'one',
-        color: "#06D6A0",
+        color: colors[0],
         inner: { label: "1", points: 1 },
         outer: { label: "1", points: 1  },
       }),
       three: makeWedge({
         name: 'three',
-        color: "#EF476F",
+        color: colors[1],
         inner: { label: "3", points: 3 },
         outer: { label: "3", points: 3 },
       }),
       five: makeWedge({
         name: 'five',
-        color: "#F4D35E",
+        color: colors[2],
         inner: { label: "5", points: 5 },
         outer: { label: "5", points: 5 },
       }),
       seven: makeWedge({
         name: 'seven',
-        color: "#6A9FB5",
+        color: colors[3],
         inner: { label: "7", points: 7 },
         outer: { label: "7", points: 7 },
       }),
       nine: makeWedge({
         name: 'nine',
-        color: "#EE964B",
+        color: colors[4],
         inner: { label: "9", points: 9 },
         outer: { label: "9", points: 9 },
       }),
       eleven: makeWedge({
         name: 'eleven',
-        color: "#736CED",
+        color: colors[5],
         inner: { label: "11", points: 11 },
         outer: { label: "11", points: 11 },
       }),
