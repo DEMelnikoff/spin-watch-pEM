@@ -87,7 +87,7 @@ const exp = (function() {
 
             `<div class='parent'>
                 <p>The chance of a standard outcome is displayed before each wheel. 
-                For example, this message means that for the next wheel, each spin a 75% chance of a standard outcome and a 25% chance of a random outcome.</p>
+                For example, this message means that for the next wheel, each spin has a 75% chance of a standard outcome and a 25% chance of a random outcome.</p>
                 <img src="./img/outcome-75.png" style="width:70%; height:70%">      
             </div>`,
 
@@ -130,7 +130,7 @@ const exp = (function() {
             </div>`,      
 
             `<div class='parent'>
-                <p>You're ready to start playing Wheel of Fortune!</p>
+                <p>You're ready to start Wheel of Fortune!</p>
                 <p>Continue to the next screen to begin.</p>
             </div>`,      
         ],
@@ -149,7 +149,7 @@ const exp = (function() {
             </div>`,      
 
             `<div class='parent'>
-                <p>You're ready to start playing Wheel of Fortune!</p>
+                <p>You're ready to start Wheel of Fortune!</p>
                 <p>Continue to the next screen to begin.</p>
             </div>`,      
         ],
