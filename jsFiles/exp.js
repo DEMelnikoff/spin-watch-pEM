@@ -56,7 +56,7 @@ const exp = (function() {
             </div>`,
 
             `<div class='parent'>
-                <p>When a wheel stops spinning, one of the wedges will activate.</p>
+                <p>After a wheel stops spinning, one of the wedges will activate.</p>
                 <p>The activated wedge will turn black, like this:</p>
                 <img src="./img/standard-outcome.png" style="width:50%; height:50%">
             </div>`,
@@ -86,8 +86,8 @@ const exp = (function() {
             </div>`,
 
             `<div class='parent'>
-                <p>The chance of a standard outcome is displayed before each wheel.</p>
-                <p>For example, this message means that the next wheel has a 75% chance of a standard outcome and a 25% chance of a random outcome.</p>
+                <p>The chance of a standard outcome is displayed before each wheel. 
+                For example, this message means that for the next wheel, each spin a 75% chance of a standard outcome and a 25% chance of a random outcome.</p>
                 <img src="./img/outcome-75.png" style="width:70%; height:70%">      
             </div>`,
 
