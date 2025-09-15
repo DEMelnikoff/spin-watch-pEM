@@ -5,7 +5,7 @@ const exp = (function() {
 
     var p = {};
 
-    const condition = 1;
+    const condition = Math.floor(Math.random() * 2);
 
     const play = ["play", "watch"][condition];
 
@@ -47,7 +47,7 @@ const exp = (function() {
             `<div class='parent'>
                 <p>The more tokens you earn, the better your chances of winning a <strong>$100.00 bonus prize</strong>.</p>
                 <p>The tokens you earn will be entered into a lottery, and if one of your tokens is drawn, you'll win $100.00. 
-                To maximize your chances of winning a $100.00 bonus, you'll need to earn as many tokens as possible.</p>
+                To maximize your chances of winning $100.00, you'll need as many tokens as possible.</p>
             </div>`,
 
             `<div class='parent'>
@@ -276,14 +276,14 @@ const exp = (function() {
     const wheels = [
 
             {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ], wheel_id: 1, reliability: 1, label: "100%", ev: 4, sd: 2, mi: 2},
-            {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ], wheel_id: 2, reliability: .75, label: "75%", ev: 4, sd: 2, mi: .792},
-            {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ], wheel_id: 3, reliability: .5, label: "50%", ev: 4, sd: 2, mi: .208},
-            {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ], wheel_id: 4, reliability: .25, label: "25%", ev: 4, sd: 2, mi: 0},
+        //    {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ], wheel_id: 2, reliability: .75, label: "75%", ev: 4, sd: 2, mi: .792},
+        //    {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ], wheel_id: 3, reliability: .5, label: "50%", ev: 4, sd: 2, mi: .208},
+        //    {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ], wheel_id: 4, reliability: .25, label: "25%", ev: 4, sd: 2, mi: 0},
 
-            {sectors: [ wedges.five, wedges.seven, wedges.nine, wedges.eleven ], wheel_id: 5, reliability: 1, label: "100%", ev: 8, sd: 2, mi: 2},
-            {sectors: [ wedges.five, wedges.seven, wedges.nine, wedges.eleven ], wheel_id: 6, reliability: .75, label: "75%", ev: 8, sd: 2, mi: .792},
-            {sectors: [ wedges.five, wedges.seven, wedges.nine, wedges.eleven ], wheel_id: 7, reliability: .5, label: "50%", ev: 8, sd: 2, mi: .208},
-            {sectors: [ wedges.five, wedges.seven, wedges.nine, wedges.eleven ], wheel_id: 8, reliability: .25, label: "25%", ev: 8, sd: 2, mi: 0},
+        //    {sectors: [ wedges.five, wedges.seven, wedges.nine, wedges.eleven ], wheel_id: 5, reliability: 1, label: "100%", ev: 8, sd: 2, mi: 2},
+        //    {sectors: [ wedges.five, wedges.seven, wedges.nine, wedges.eleven ], wheel_id: 6, reliability: .75, label: "75%", ev: 8, sd: 2, mi: .792},
+        //    {sectors: [ wedges.five, wedges.seven, wedges.nine, wedges.eleven ], wheel_id: 7, reliability: .5, label: "50%", ev: 8, sd: 2, mi: .208},
+        //    {sectors: [ wedges.five, wedges.seven, wedges.nine, wedges.eleven ], wheel_id: 8, reliability: .25, label: "25%", ev: 8, sd: 2, mi: 0},
 
         ];
 

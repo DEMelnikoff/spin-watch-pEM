@@ -53,7 +53,7 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reliability,
 
   /* pointer variables */
   const directions = ["pointUp", "pointRight", "pointDown", "pointLeft"];
-  const direction_idxs = jsPsych.randomization.repeat([0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3], 1);
+  const direction_idxs = jsPsych.randomization.repeat([0, 0, 0], 1);
 
   /* flip variables */
   const nFlips = 12 * reliability;
@@ -241,8 +241,7 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reliability,
           let points_real = sector_real.points;
           spinnerData.outcomes_points.push(points);
           spinnerData.outcomes_wedges.push(points_real);
-          drawSector(sectors, sectorIdx_mod, points);
-          updateScore(points, "black");
+          setTimeout(() => { updateScore(points, "black", sectorIdx_mod) }, 1000);
         };
       };
     };
@@ -252,10 +251,12 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reliability,
   /* generate random float in range min-max */
   const rand = (m, M) => Math.random() * (M - m) + m;
 
-  const updateScore = (points, color) => {
+
+  const updateScore = (points, color, sectorIdx_mod) => {
     score += points;
     spinnerData.score = score;
     scoreMsg.innerHTML = `<span style="color:${color}; font-weight: bolder">${score}</span>`;
+    drawSector(sectors, sectorIdx_mod, points);
     setTimeout(() => {
       scoreMsg.innerHTML = `${score}`
       isSpinning = (spinnerData.outcomes_points.length >= 12) ? true : false;
