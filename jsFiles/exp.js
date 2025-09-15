@@ -62,69 +62,40 @@ const exp = (function() {
             </div>`,
 
             `<div class='parent'>
-                <p>Each wheel is divided into four wedges, like this:</p>
-                <img src="./img/arrow-up.png" style="width:50%; height:50%">
+                <p>Each wheel is divided into wedges.</p>
+                <p>Each wedge contains and inner and outer segment:</p>
+                <img src="./img/wheel.png" style="width:50%; height:50%">
             </div>`,
 
             `<div class='parent'>
-                <p>After a wheel stops spinning, one of the wedges will activate.</p>
-                <p>The activated wedge will turn black, like this:</p>
-                <img src="./img/standard-outcome.png" style="width:50%; height:50%">
+                <p>After a wheel lands on a wedge, one of the segments will activate.</p>
+                <img src="./img/land.png" style="width:50%; height:50%">
             </div>`,
 
             `<div class='parent'>
-                <p>The number on the activated wedge is added to your total score.</p>
-                <p>In this example, you'd gain 11 tokens.</p>
-                <img src="./img/standard-outcome.png" style="width:50%; height:50%">
+                <p>50% of the time, the inner segment will activate, like this:</p>
+                <img src="./img/inner.png" style="width:50%; height:50%">
             </div>`,
 
             `<div class='parent'>
-                <p>Typically, the wedge that lands on the arrow will activate.</p>
-                <p>This is called a "standard outcome."</p>
-                <p>Below is an example of a standard outcome.</p>
-                <img src="./img/standard-outcome.png" style="width:50%; height:50%">
+                <p>50% of the time, the outer segment will activate, like this:</p>
+                <img src="./img/outer.png" style="width:50%; height:50%">
             </div>`,
 
             `<div class='parent'>
-                <p>Occasionally, a random wedge will activate instead.</p>
-                <p>This is called a "random outcome."</p>
-                <p>Here's an example of a random outcome:</p>
-                <img src="./img/random-outcome.png" style="width:50%; height:50%">
+                <p>The number on the activated wedge is added to your token tally.</p>
+                <img src="./img/outer.png" style="width:50%; height:50%">
             </div>`,
 
             `<div class='parent'>
-                <p>The chance of a standard outcome changes from wheel to wheel.</p>
+                <p>For example, after landing on this wedge, you'd have a 50% of getting 7 tokens and a 50% chance of getting 1 token.</p>
+                <img src="./img/1_7.png" style="width:50%; height:50%">
             </div>`,
 
             `<div class='parent'>
-                <p>The chance of a standard outcome is displayed before each wheel. 
-                For example, this message means that for the next wheel, each spin has a 75% chance of a standard outcome and a 25% chance of a random outcome.</p>
-                <img src="./img/outcome-75.png" style="width:70%; height:70%">      
+                <p>After landing on this wedge, you'd have a 100% of getting 7 tokens.</p>
+                <img src="./img/7_7.png" style="width:50%; height:50%">
             </div>`,
-
-            `<div class='parent'>
-                <p>After each spin, the arrow at the center of the wheel will change directions.</p>
-            </div>`,
-
-            `<div class='parent'>
-                <p>Sometimes the arrow will point up:</p>
-                <img src="./img/arrow-up.png" style="width:50%; height:50%">      
-            </div>`,
-
-            `<div class='parent'>
-                <p>Sometimes the arrow will point right:</p>
-                <img src="./img/arrow-right.png" style="width:50%; height:50%">      
-            </div>`,
-
-            `<div class='parent'>
-                <p>Sometimes the arrow will point left:</p>
-                <img src="./img/arrow-left.png" style="width:50%; height:50%">      
-            </div>`,
-
-            `<div class='parent'>
-                <p>Sometimes the arrow will point down:</p>
-                <img src="./img/arrow-down.png" style="width:50%; height:50%">      
-            </div>`
         ],
 
         how_to_spin_play: [
@@ -187,7 +158,7 @@ const exp = (function() {
         allow_keys: false,
     };
 
-    let correctAnswers = [`100%`, `75%`, `50%`, `25%`, `Earn as many tokens as possible.`];
+    let correctAnswers = [`50%`, `100%`, `Earn as many tokens as possible.`];
 
     const errorMessage = {
         type: jsPsychInstructions,
@@ -203,28 +174,18 @@ const exp = (function() {
             </div>`,
         questions: [
             {
-                prompt: `If you land on a 9 and there's a 100% chance of a standard outcome, what are your chances of earning 9 tokens?`, 
+                prompt: `If you land on a wedge with a 1 in the inner segment and a 7 in the outer segment, what are your chances of earning 7 tokens?`, 
                 name: `attnChk1`, 
                 options: ['100%', '75%', '50%', '25%'],
             },
             {
-                prompt: `If you land on a 9 and there's a 75% chance of a standard outcome, what are your chances of earning 9 tokens?`, 
+                prompt: `If you land on a wedge with a 7 in both the inner and outer segment, what are your chances of earning 7 tokens?`, 
                 name: `attnChk2`, 
                 options: ['100%', '75%', '50%', '25%'],
             },
             {
-                prompt: `If you land on a 9 and there's a 50% chance of a standard outcome, what are your chances of earning 9 tokens?`, 
-                name: `attnCh3`, 
-                options: ['100%', '75%', '50%', '25%'],
-            },
-            {
-                prompt: `If you land on a 9 and there's a 25% chance of a standard outcome, what are your chances of earning 9 tokens?`, 
-                name: `attnCh4`, 
-                options: ['100%', '75%', '50%', '25%'],
-            },
-            {
                 prompt: `What is your goal?`, 
-                name: `attnChk5`, 
+                name: `attnChk3`, 
                 options: [`Get as many standard outcomes as possible.`, `Get as many random outcomes as possible.`, `Earn as many tokens as possible.`],
             },
         ],
@@ -268,33 +229,110 @@ const exp = (function() {
 
 
 
-    // define each wedge
-    const wedges = {
-        one: {color: "#06D6A0", font: 'white', label:"1", points: 1},
-        three: {color: "#EF476F", font: 'white', label:"3", points: 3},
-        five: {color: "#F4D35E", font: 'white', label:"5", points: 5},
-        seven: {color: "#6A9FB5", font: 'white', label:"7", points: 7},
-        nine: {color: "#EE964B", font: 'white', label:"9", points: 9},
-        eleven: {color: "#736CED", font: 'white', label:"11", points: 11},
+
+    // tiny helper for consistency + fewer typos
+
+    const colors = jsPsych.randomization.repeat(["#06D6A0", "#EF476F", "#F4D35E", "#6A9FB5", "#EE964B", "#736CED"], 1);
+    const NUMBER_COLORS = {
+      "1":  colors[0],
+      "3":  colors[1],
+      "5":  colors[2],
+      "7":  colors[3],
+      "9":  colors[4],
+      "11": colors[5],
     };
 
-    function shuffleColorsInPlace(wedgesObj) {
-        const shuffledColors = jsPsych.randomization.repeat(Object.values(wedgesObj).map(w => w.color), 1);
-        Object.keys(wedgesObj).forEach((key, i) => { wedgesObj[key].color = shuffledColors[i] });
+    function makeWedge({ name, color, font = 'white', inner, outer }) {
+      const colorFor = (label) => NUMBER_COLORS[String(label)] || color || '#888';
+      return {
+        name,
+        font,
+        // keep a root color for any legacy references (e.g., outer color)
+        color: colorFor(outer?.label ?? inner?.label),
+        inner: {
+          label: String(inner.label),
+          points: inner.points,
+          color: colorFor(inner.label),
+        },
+        outer: {
+          label: String(outer.label),
+          points: outer.points,
+          color: colorFor(outer.label),
+        },
+      };
+    }
+
+    // Build your wedge library with custom inner/outer values
+    const wedges = {
+      one_seven: makeWedge({
+        name: 'one_seven',
+        color: "#06D6A0",
+        inner: { label: "1",  points: 1 },   // inner pays 2
+        outer: { label: "7",  points: 7 },   // outer pays 1
+      }),
+      three_five: makeWedge({
+        name: 'three_five',
+        color: "#EF476F",
+        inner: { label: "3",  points: 3 },
+        outer: { label: "5",  points: 5 },
+      }),
+      five_eleven: makeWedge({
+        name: 'five_eleven',
+        color: "#F4D35E",
+        inner: { label: "5",  points: 5 },
+        outer: { label: "11", points: 11 },
+      }),
+      seven_nine: makeWedge({
+        name: 'seven_nine',
+        color: "#6A9FB5",
+        inner: { label: "7", points: 7 },
+        outer: { label: "9",  points: 9  },
+      }),
+      one: makeWedge({
+        name: 'one',
+        color: "#06D6A0",
+        inner: { label: "1", points: 1 },
+        outer: { label: "1", points: 1  },
+      }),
+      three: makeWedge({
+        name: 'three',
+        color: "#EF476F",
+        inner: { label: "3", points: 3 },
+        outer: { label: "3", points: 3 },
+      }),
+      five: makeWedge({
+        name: 'five',
+        color: "#F4D35E",
+        inner: { label: "5", points: 5 },
+        outer: { label: "5", points: 5 },
+      }),
+      seven: makeWedge({
+        name: 'seven',
+        color: "#6A9FB5",
+        inner: { label: "7", points: 7 },
+        outer: { label: "7", points: 7 },
+      }),
+      nine: makeWedge({
+        name: 'nine',
+        color: "#EE964B",
+        inner: { label: "9", points: 9 },
+        outer: { label: "9", points: 9 },
+      }),
+      eleven: makeWedge({
+        name: 'eleven',
+        color: "#736CED",
+        inner: { label: "11", points: 11 },
+        outer: { label: "11", points: 11 },
+      }),
     };
 
     // define each wheel
     const wheels = [
 
-            {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ], wheel_id: 1, reliability: 1, label: "100%", ev: 4, sd: 2, mi: 2},
-            {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ], wheel_id: 2, reliability: .75, label: "75%", ev: 4, sd: 2, mi: .792},
-            {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ], wheel_id: 3, reliability: .5, label: "50%", ev: 4, sd: 2, mi: .208},
-            {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ], wheel_id: 4, reliability: .25, label: "25%", ev: 4, sd: 2, mi: 0},
-
-            {sectors: [ wedges.five, wedges.seven, wedges.nine, wedges.eleven ], wheel_id: 5, reliability: 1, label: "100%", ev: 8, sd: 2, mi: 2},
-            {sectors: [ wedges.five, wedges.seven, wedges.nine, wedges.eleven ], wheel_id: 6, reliability: .75, label: "75%", ev: 8, sd: 2, mi: .792},
-            {sectors: [ wedges.five, wedges.seven, wedges.nine, wedges.eleven ], wheel_id: 7, reliability: .5, label: "50%", ev: 8, sd: 2, mi: .208},
-            {sectors: [ wedges.five, wedges.seven, wedges.nine, wedges.eleven ], wheel_id: 8, reliability: .25, label: "25%", ev: 8, sd: 2, mi: 0},
+            {sectors: [ wedges.one_seven, wedges.three_five, wedges.one_seven, wedges.three_five ],     wheel_id: 1, reliability: 1, label: "100%", ev: 4, sd: 2, mi: 1},
+            {sectors: [ wedges.five_eleven, wedges.seven_nine, wedges.five_eleven, wedges.seven_nine ], wheel_id: 2, reliability: 1, label: "100%", ev: 8, sd: 2, mi: 1},
+            {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ],   wheel_id: 3, reliability: 1, label: "100%", ev: 4, sd: 2, mi: 2},
+            {sectors: [ wedges.five, wedges.seven, wedges.nine, wedges.eleven ], wheel_id: 4, reliability: 1, label: "100%", ev: 8, sd: 2, mi: 2},
 
         ];
 
@@ -302,7 +340,6 @@ const exp = (function() {
 
     let round = 1;  // track current round
 
-    shuffleColorsInPlace(wedges);
 
     const preSpin = {
         type: jsPsychHtmlKeyboardResponse,
@@ -326,7 +363,7 @@ const exp = (function() {
     const spin = {
         type: jsPsychCanvasButtonResponse,
         stimulus: function(c, spinnerData) {
-            createSpinner(c, spinnerData, scoreTracker, jsPsych.timelineVariable('sectors'), jsPsych.timelineVariable('reliability'), jsPsych.timelineVariable('label'), false, playBool);
+            createSpinner(c, spinnerData, scoreTracker, jsPsych.timelineVariable('sectors'), jsPsych.timelineVariable('reliability'), jsPsych.timelineVariable('label'), playBool);
         },
         canvas_size: [500, 500],
         score: function() {
@@ -385,7 +422,7 @@ const exp = (function() {
 
     // timeline: main task
     p.task = {
-        timeline: [preSpin, spin, flowMeasure, happinessMeasure],
+        timeline: [spin, flowMeasure, happinessMeasure],
         repetitions: 1,
         timeline_variables: wheels,
         randomize_order: true,
@@ -468,7 +505,7 @@ const exp = (function() {
     p.save_data = {
         type: jsPsychPipe,
         action: "save",
-        experiment_id: "DAVioD79OhOz",
+        experiment_id: "XrNaVvlunrtq",
         filename: filename,
         data_string: ()=>jsPsych.data.get().csv()
     };

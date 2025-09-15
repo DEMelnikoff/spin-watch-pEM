@@ -46,30 +46,15 @@ const getTotalErrors = (data, correctAnswers) => {
     return totalErrors;
 };
 
-const createSpinner = function(canvas, spinnerData, score, sectors, reliability, label, lose, interactive) {
+const createSpinner = function(canvas, spinnerData, score, sectors, reliability, label, interactive) {
+
+  
 
   /* get context */
   const ctx = canvas.getContext("2d"); 
 
-  /* pointer variables */
-  const directions = ["pointUp", "pointRight", "pointDown", "pointLeft"];
-  const direction_idxs = jsPsych.randomization.repeat([0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3], 1);
-
-  /* flip variables */
-  const nFlips = 12 * reliability;
-  let flip_array = Array(nFlips).fill(0).concat(Array(12-nFlips).fill(1));
-  flip_array = jsPsych.randomization.repeat(flip_array, 1);
-  const flipFunc = function(arr, n) {
-    const filteredArr = arr.filter((_, index) => index !== n);
-    const randomIndex = Math.floor(Math.random() * filteredArr.length);
-    return filteredArr[randomIndex];
-  }
-
-  /* get pointer */
-  let pointer = document.querySelector("#spinUp");
-  let direction_idx = direction_idxs.pop();
-  pointer.className = directions[direction_idx];
-  pointer.innerHTML = label;
+  let layerArray = Array(6).fill('inner').concat(Array(6).fill('outer'));
+  layerArray = jsPsych.randomization.repeat(layerArray, 1);
 
   /* get score message */
   const scoreMsg = document.getElementById("score");
@@ -107,7 +92,6 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reliability,
   let direction;
   let animId = null;          // current requestAnimationFrame handle
 
-  let loseSpeed = 37
 
   /* define spinning functions */
 
@@ -161,9 +145,6 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reliability,
         isAccelerating = true;
         isSpinning = true;
         angVelMax = rand(25, 50);
-        if (lose) {
-          speed = (direction == 1) ? Math.min(speed, 25) : Math.max(speed, -25);
-        };
         giveMoment(speed)
       };
     };   
@@ -180,11 +161,7 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reliability,
       lastTimestamp = timestamp;
 
       // stop accelerating when max speed is reached
-      if (lose) {
-        if (Math.abs(speed) >= loseSpeed && liveSectorLabel == "L") isAccelerating = false;
-      } else {
-        if (Math.abs(speed) >= angVelMax) isAccelerating = false;
-      }
+      if (Math.abs(speed) >= angVelMax) isAccelerating = false;
 
       let liveSector = sectors[getIndex(oldAngle)];
       liveSectorLabel = liveSector.label;
@@ -194,11 +171,7 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reliability,
       // accelerate
       if (isAccelerating) {
         let growthRate = Math.log(1.06) * 60;
-        if (lose) {
-          speed = (direction === 1) ? Math.min(speed * Math.exp(growthRate * deltaTime), loseSpeed) : Math.max(speed * Math.exp(growthRate * deltaTime), -loseSpeed);        
-        } else {
-          speed *= Math.exp(growthRate * deltaTime);
-        };
+        speed *= Math.exp(growthRate * deltaTime);
         animId = requestAnimationFrame(step);
         oldAngle += speed * deltaTime * 60;
         lastAngles.shift();
@@ -212,36 +185,27 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reliability,
         isAccelerating = false;
         speed *= Math.exp(decayRate * deltaTime); // Exponential decay
         animId = requestAnimationFrame(step);
-        if ( (Math.abs(speed) > angVelMin * .2) || (Math.abs(speed) > angVelMin * .08 && oldAngle_corrected < 290) || (Math.abs(speed) > angVelMin * .08 && oldAngle_corrected > 340) ) {
-          oldAngle += speed * deltaTime * 60;
-          lastAngles.shift();
-          lastAngles.push(oldAngle);
-          render(oldAngle);  
-        } else if (!lose && Math.abs(speed) > angVelMin * .1) {
+        if (Math.abs(speed) > angVelMin * .1) {
           // decelerate
           oldAngle += speed * deltaTime * 60;
           lastAngles.shift();
           lastAngles.push(oldAngle);
           render(oldAngle);       
         } else {
-          // stop spinner
           speed = 0;
           if (animId !== null) {
             cancelAnimationFrame(animId);
             animId = null;
-          };
+          }
           currentAngle = oldAngle;
-          flip = flip_array.pop();
-          let sectorIdx_real = getIndex() + direction_idx;
-          sectorIdx_real = (sectorIdx_real < 4) ? sectorIdx_real : sectorIdx_real % 4;
-          let sectorIdx_mod = flip == 0 ? sectorIdx_real : flipFunc([0, 1, 2, 3], sectorIdx_real);
-          let sector = sectors[sectorIdx_mod];
-          let points = sector.points;
-          let sector_real = sectors[sectorIdx_real];
-          let points_real = sector_real.points;
+          let sectorIdx = getIndex();
+          const layer = layerArray.pop();
+          let sector = sectors[sectorIdx];
+          spinnerData.outcomes_wedges.push(sector.outer.points); // or sector_real.inner.points; your choice
+          let prizeObj = sector[layer]; // {label, points}
+          let points   = prizeObj.points;
           spinnerData.outcomes_points.push(points);
-          spinnerData.outcomes_wedges.push(points_real);
-          setTimeout(() => { updateScore(points, "black", sectorIdx_mod) }, 1000);
+          setTimeout(() => { updateScore(points, "black", sectorIdx, layer) }, 1000);
         };
       };
     };
@@ -252,18 +216,15 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reliability,
   const rand = (m, M) => Math.random() * (M - m) + m;
 
 
-  const updateScore = (points, color, sectorIdx_mod) => {
+  const updateScore = (points, color, sectorIdx, layer) => {
     score += points;
     spinnerData.score = score;
     scoreMsg.innerHTML = `<span style="color:${color}; font-weight: bolder">${score}</span>`;
-    drawSector(sectors, sectorIdx_mod, points);
+    drawSector(sectors, sectorIdx, layer); // <--- pass layer
     setTimeout(() => {
       scoreMsg.innerHTML = `${score}`
       isSpinning = (spinnerData.outcomes_points.length >= 12) ? true : false;
-      drawSector(sectors, null);
-      direction_idx = (spinnerData.outcomes_points.length >= 12) ? direction_idx : direction_idxs.pop();
-      pointer.className = directions[direction_idx];
-      pointer.innerHTML = label;
+      drawSector(sectors, null, null);
       onWheel ? canvas.style.cursor = "grab" : canvas.style.cursor = "";
       if (!interactive && spinnerData.outcomes_points.length < 12) { setTimeout(startAutoSpin, 1000) };
     }, 1000);
@@ -284,47 +245,129 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reliability,
   }
 
   //* Draw sectors and prizes texts to canvas */
-  const drawSector = (sectors, sector) => {
+  const drawSector = (sectors, sectorIdx = null, activeLayer = null) => {
+    const INNER_F = 0.65;  // fraction of radius for inner disk
+    const TEXT_INNER_R = 0.40;
+    const TEXT_OUTER_R = 0.80;
+    const BORDER_PAD = 6;  // padding so outlines don’t get cut off
+
+    // local radius, keep center at (rad, rad)
+    const localR = rad - BORDER_PAD;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     for (let i = 0; i < sectors.length; i++) {
-      const ang = arc * i;
+      const ang0 = arc * i;
+      const ang1 = ang0 + arc;
+
+      // --- fill outer wedge ---
       ctx.save();
-      // COLOR
       ctx.beginPath();
-      ctx.fillStyle = (isSpinning && i == sector) ? "black" : sectors[i].color;
       ctx.moveTo(rad, rad);
-      ctx.arc(rad, rad, rad, ang, ang + arc);
+      ctx.arc(rad, rad, localR, ang0, ang1);
       ctx.lineTo(rad, rad);
+      ctx.closePath();
+      ctx.fillStyle = sectors[i].outer.color;   // <— was sectors[i].color
       ctx.fill();
-      // TEXT
-      ctx.translate(rad, rad);
-      let rotation = (arc/2) * (1 + 2*i) + Math.PI/2
-      ctx.rotate( rotation );
 
+      // --- knock inner disk to create "ring" ---
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.beginPath();
+      ctx.moveTo(rad, rad);
+      ctx.arc(rad, rad, localR * INNER_F, ang0, ang1);
+      ctx.lineTo(rad, rad);
+      ctx.closePath();
+      ctx.fill();
 
-      //ctx.rotate( (ang + arc / 2) + arc );
-      ctx.textAlign = "center";
-      ctx.fillStyle = "#fff";
-      if (isSpinning && i == sector) {
-        ctx.font = "bolder 90px sans-serif"
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 3;
-        ctx.strokeText(sectors[i].label, 0, -140);
-        ctx.fillText(sectors[i].label, 0, -140);
-      } else {
-        ctx.font = "bold 65px sans-serif"
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 3;
-        ctx.strokeText(sectors[i].label, 0, -140);
-        ctx.fillText(sectors[i].label, 0, -140);
+      // --- paint inner disk back ---
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.beginPath();
+      ctx.moveTo(rad, rad);
+      ctx.arc(rad, rad, localR * INNER_F, ang0, ang1);
+      ctx.lineTo(rad, rad);
+      ctx.closePath();
+      ctx.fillStyle = sectors[i].inner.color;   // <— was sectors[i].color
+      ctx.fill();
+
+      // --- highlight winning layer (if any) ---
+      if (sectorIdx !== null && i === sectorIdx && isSpinning) {
+        const highlight = (layer) => {
+          ctx.save();
+          // Clear dim just for target layer
+          ctx.globalCompositeOperation = 'destination-out';
+          ctx.beginPath();
+          if (layer === 'outer') {
+            ctx.arc(rad, rad, localR, ang0, ang1, false);
+            ctx.arc(rad, rad, localR * INNER_F, ang1, ang0, true);
+          } else {
+            ctx.moveTo(rad, rad);
+            ctx.arc(rad, rad, localR * INNER_F, ang0, ang1, false);
+            ctx.lineTo(rad, rad);
+          }
+          ctx.closePath();
+          ctx.fill();
+
+          // Paint back with solid highlight
+          ctx.globalCompositeOperation = 'source-over';
+          ctx.beginPath();
+          if (layer === 'outer') {
+            ctx.arc(rad, rad, localR, ang0, ang1, false);
+            ctx.arc(rad, rad, localR * INNER_F, ang1, ang0, true);
+          } else {
+            ctx.moveTo(rad, rad);
+            ctx.arc(rad, rad, localR * INNER_F, ang0, ang1, false);
+            ctx.lineTo(rad, rad);
+          }
+          ctx.closePath();
+          ctx.fillStyle = '#000';
+          ctx.fill();
+          ctx.restore();
+        };
+
+        if (activeLayer === 'inner' || activeLayer === 'outer') {
+          highlight(activeLayer);
+        }
       }
-     // ctx.fillText(sector.label, rad - 80, 10);
-     // textUnderline(ctx,sectors[i].label, 0, -135, "#fff", "50px", "center");
-      // RESTORE
+
+      // --- labels ---
+      ctx.save();
+      ctx.translate(rad, rad); // keep center at (rad, rad)
+      ctx.rotate((ang0 + ang1) / 2 + Math.PI / 2);
+      ctx.textAlign = "center";
+      ctx.strokeStyle = 'black';
+      ctx.lineWidth = 3;
+
+      ctx.font = "bold 48px sans-serif";
+      const outerLabel = sectors[i].outer.label;
+      ctx.strokeText(outerLabel, 0, -localR * TEXT_OUTER_R);
+      ctx.fillStyle = "#fff";
+      ctx.fillText(outerLabel, 0, -localR * TEXT_OUTER_R);
+
+      ctx.font = "bold 44px sans-serif";
+      const innerLabel = sectors[i].inner.label;
+      ctx.strokeText(innerLabel, 0, -localR * TEXT_INNER_R);
+      ctx.fillStyle = "#fff";
+      ctx.fillText(innerLabel, 0, -localR * TEXT_INNER_R);
+      ctx.restore();
+
+      // --- borders ---
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(rad, rad, localR, ang0, ang1);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "rgba(0,0,0,0.25)";
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(rad, rad, localR * INNER_F, ang0, ang1);
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = "rgba(0,0,0,0.25)";
+      ctx.stroke();
       ctx.restore();
     }
   };
 
-  drawSector(sectors, null);
+  drawSector(sectors, null, null);
 
   function startAutoSpin() {
     direction = (Math.random() < 0.5 ? 1 : -1);
