@@ -53,7 +53,7 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reliability,
 
   /* pointer variables */
   const directions = ["pointUp", "pointRight", "pointDown", "pointLeft"];
-  const direction_idxs = jsPsych.randomization.repeat([0, 0, 0], 1);
+  const direction_idxs = jsPsych.randomization.repeat([0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3], 1);
 
   /* flip variables */
   const nFlips = 12 * reliability;

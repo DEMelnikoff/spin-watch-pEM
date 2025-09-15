@@ -276,20 +276,22 @@ const exp = (function() {
     const wheels = [
 
             {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ], wheel_id: 1, reliability: 1, label: "100%", ev: 4, sd: 2, mi: 2},
-        //    {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ], wheel_id: 2, reliability: .75, label: "75%", ev: 4, sd: 2, mi: .792},
-        //    {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ], wheel_id: 3, reliability: .5, label: "50%", ev: 4, sd: 2, mi: .208},
-        //    {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ], wheel_id: 4, reliability: .25, label: "25%", ev: 4, sd: 2, mi: 0},
+            {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ], wheel_id: 2, reliability: .75, label: "75%", ev: 4, sd: 2, mi: .792},
+            {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ], wheel_id: 3, reliability: .5, label: "50%", ev: 4, sd: 2, mi: .208},
+            {sectors: [ wedges.one, wedges.three, wedges.five, wedges.seven ], wheel_id: 4, reliability: .25, label: "25%", ev: 4, sd: 2, mi: 0},
 
-        //    {sectors: [ wedges.five, wedges.seven, wedges.nine, wedges.eleven ], wheel_id: 5, reliability: 1, label: "100%", ev: 8, sd: 2, mi: 2},
-        //    {sectors: [ wedges.five, wedges.seven, wedges.nine, wedges.eleven ], wheel_id: 6, reliability: .75, label: "75%", ev: 8, sd: 2, mi: .792},
-        //    {sectors: [ wedges.five, wedges.seven, wedges.nine, wedges.eleven ], wheel_id: 7, reliability: .5, label: "50%", ev: 8, sd: 2, mi: .208},
-        //    {sectors: [ wedges.five, wedges.seven, wedges.nine, wedges.eleven ], wheel_id: 8, reliability: .25, label: "25%", ev: 8, sd: 2, mi: 0},
+            {sectors: [ wedges.five, wedges.seven, wedges.nine, wedges.eleven ], wheel_id: 5, reliability: 1, label: "100%", ev: 8, sd: 2, mi: 2},
+            {sectors: [ wedges.five, wedges.seven, wedges.nine, wedges.eleven ], wheel_id: 6, reliability: .75, label: "75%", ev: 8, sd: 2, mi: .792},
+            {sectors: [ wedges.five, wedges.seven, wedges.nine, wedges.eleven ], wheel_id: 7, reliability: .5, label: "50%", ev: 8, sd: 2, mi: .208},
+            {sectors: [ wedges.five, wedges.seven, wedges.nine, wedges.eleven ], wheel_id: 8, reliability: .25, label: "25%", ev: 8, sd: 2, mi: 0},
 
         ];
 
     let scoreTracker = 0; // track current score
 
     let round = 1;  // track current round
+
+    shuffleColorsInPlace(wedges);
 
     const preSpin = {
         type: jsPsychHtmlKeyboardResponse,
@@ -313,7 +315,6 @@ const exp = (function() {
     const spin = {
         type: jsPsychCanvasButtonResponse,
         stimulus: function(c, spinnerData) {
-            //shuffleColorsInPlace(wedges);
             createSpinner(c, spinnerData, scoreTracker, jsPsych.timelineVariable('sectors'), jsPsych.timelineVariable('reliability'), jsPsych.timelineVariable('label'), false, playBool);
         },
         canvas_size: [500, 500],
