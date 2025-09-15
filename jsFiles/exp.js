@@ -69,7 +69,7 @@ const exp = (function() {
 
             `<div class='parent'>
                 <p>After a wheel lands on a wedge, one of the segments will activate.</p>
-                <img src="./img/land.png" style="width:50%; height:50%">
+                <img src="./img/wheel.png" style="width:50%; height:50%">
             </div>`,
 
             `<div class='parent'>
@@ -232,33 +232,14 @@ const exp = (function() {
 
     // tiny helper for consistency + fewer typos
 
-    const colors = jsPsych.randomization.repeat(["#06D6A0", "#EF476F", "#F4D35E", "#6A9FB5", "#EE964B", "#736CED"], 1);
-    const NUMBER_COLORS = {
-      "1":  colors[0],
-      "3":  colors[1],
-      "5":  colors[2],
-      "7":  colors[3],
-      "9":  colors[4],
-      "11": colors[5],
-    };
 
     function makeWedge({ name, color, font = 'white', inner, outer }) {
-      const colorFor = (label) => NUMBER_COLORS[String(label)] || color || '#888';
       return {
         name,
+        color,
         font,
-        // keep a root color for any legacy references (e.g., outer color)
-        color: colorFor(outer?.label ?? inner?.label),
-        inner: {
-          label: String(inner.label),
-          points: inner.points,
-          color: colorFor(inner.label),
-        },
-        outer: {
-          label: String(outer.label),
-          points: outer.points,
-          color: colorFor(outer.label),
-        },
+        inner: { label: String(inner.label), points: inner.points },
+        outer: { label: String(outer.label), points: outer.points }
       };
     }
 
@@ -505,7 +486,7 @@ const exp = (function() {
     p.save_data = {
         type: jsPsychPipe,
         action: "save",
-        experiment_id: "XrNaVvlunrtq",
+        experiment_id: "IwQNFLyrr0Kr",
         filename: filename,
         data_string: ()=>jsPsych.data.get().csv()
     };

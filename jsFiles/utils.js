@@ -267,7 +267,7 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reliability,
       ctx.arc(rad, rad, localR, ang0, ang1);
       ctx.lineTo(rad, rad);
       ctx.closePath();
-      ctx.fillStyle = sectors[i].outer.color;   // <— was sectors[i].color
+      ctx.fillStyle = sectors[i].color;   // <— was sectors[i].color
       ctx.fill();
 
       // --- knock inner disk to create "ring" ---
@@ -286,7 +286,7 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reliability,
       ctx.arc(rad, rad, localR * INNER_F, ang0, ang1);
       ctx.lineTo(rad, rad);
       ctx.closePath();
-      ctx.fillStyle = sectors[i].inner.color;   // <— was sectors[i].color
+      ctx.fillStyle = sectors[i].color;   // <— was sectors[i].color
       ctx.fill();
 
       // --- highlight winning layer (if any) ---
