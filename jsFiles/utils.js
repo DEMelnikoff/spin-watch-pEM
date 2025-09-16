@@ -280,8 +280,6 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reward, n_al
         ctx.strokeText(sectors[i].label, 0, -140);
         ctx.fillText(sectors[i].label, 0, -140);
       }
-     // ctx.fillText(sector.label, rad - 80, 10);
-     // textUnderline(ctx,sectors[i].label, 0, -135, "#fff", "50px", "center");
       // RESTORE
       ctx.restore();
     }
