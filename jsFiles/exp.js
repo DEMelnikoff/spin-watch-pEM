@@ -266,10 +266,10 @@ const exp = (function() {
     // define each wheel
     const wheels = [
 
-            {sectors: [ wedges.p60, wedges.p40, wedges.p60, wedges.p40 ], wheel_id: 1, reward: 5,  ev: 2.5, mi: 0},
-            {sectors: [ wedges.p100, wedges.p0, wedges.p100, wedges.p0 ], wheel_id: 2, reward: 5,  ev: 2.5, mi: 1},
-            {sectors: [ wedges.p60, wedges.p40, wedges.p60, wedges.p40 ], wheel_id: 3, reward: 10, ev: 5, mi: 0},
-            {sectors: [ wedges.p100, wedges.p0, wedges.p100, wedges.p0 ], wheel_id: 4, reward: 10, ev: 5, mi: 1},
+            {sectors: [ wedges.p60, wedges.p40, wedges.p60, wedges.p40 ], wheel_id: 1, reward: 5,  ev: 2.5, mi: 0, n_aligned: 9},
+            {sectors: [ wedges.p100, wedges.p0, wedges.p100, wedges.p0 ], wheel_id: 2, reward: 5,  ev: 2.5, mi: 1, n_aligned: 15},
+            {sectors: [ wedges.p60, wedges.p40, wedges.p60, wedges.p40 ], wheel_id: 3, reward: 10, ev: 5.0, mi: 0, n_aligned: 9},
+            {sectors: [ wedges.p100, wedges.p0, wedges.p100, wedges.p0 ], wheel_id: 4, reward: 10, ev: 5.0, mi: 1, n_aligned: 15},
         ];
 
     let scoreTracker = 0; // track current score
@@ -298,7 +298,7 @@ const exp = (function() {
     const spin = {
         type: jsPsychCanvasButtonResponse,
         stimulus: function(c, spinnerData) {
-            createSpinner(c, spinnerData, scoreTracker, jsPsych.timelineVariable('sectors'), jsPsych.timelineVariable('reward'), playBool);
+            createSpinner(c, spinnerData, scoreTracker, jsPsych.timelineVariable('sectors'), jsPsych.timelineVariable('reward'), jsPsych.timelineVariable('n_aligned'), playBool);
         },
         canvas_size: [500, 500],
         score: function() {
@@ -449,6 +449,6 @@ const exp = (function() {
 
 }());
 
-const timeline = [exp.consent, exp.instLoop, exp.postIntro, exp.task, exp.demographics, exp.save_data];
+const timeline = [exp.task, exp.consent, exp.instLoop, exp.postIntro, exp.task, exp.demographics, exp.save_data];
 
 jsPsych.run(timeline);

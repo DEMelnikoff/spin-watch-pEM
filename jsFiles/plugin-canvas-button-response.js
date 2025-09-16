@@ -148,9 +148,9 @@ var jsPsychCanvasButtonResponse = (function (jspsych) {
           }
           // end trial
           const waitForEnd = setInterval(function() {
-            if(spinnerData.outcomes_points.length >= 12) {
+            if(spinnerData.outcomes_points.length >= 15) {
               clearInterval(waitForEnd);
-              setTimeout(after_response, 2250);
+              setTimeout(after_response, 1500);
             }
           }, 100);
           // hide image if timing is set

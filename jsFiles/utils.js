@@ -46,13 +46,16 @@ const getTotalErrors = (data, correctAnswers) => {
     return totalErrors;
 };
 
-const createSpinner = function(canvas, spinnerData, score, sectors, reward, interactive) {
+const createSpinner = function(canvas, spinnerData, score, sectors, reward, n_aligned, interactive) {
 
   /* get context */
   const ctx = canvas.getContext("2d"); 
 
   /* get score message */
   const scoreMsg = document.getElementById("score");
+
+  let aligned_array = Array(n_aligned).fill(1).concat(Array(15 - n_aligned).fill(0));
+  aligned_array = jsPsych.randomization.repeat(aligned_array, 1);
 
   /* get wheel properties */
   let wheelWidth = canvas.getBoundingClientRect()['width'];
@@ -196,11 +199,13 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reward, inte
           let sectorIdx = getIndex();
           let sector = sectors[sectorIdx];
           let prob = sector.prob;
-          let points = (Math.random() < prob) ? reward : 0;
+          let expected_outcome = prob > .5 ? reward : 0;
+          let unexpected_outcome = prob > .5 ? 0 : reward;
+          let aligned = aligned_array.pop();
+          let points = (aligned == 1) ? expected_outcome : unexpected_outcome;
           let activationColor = points == 0 ? "black" : "green";
           spinnerData.outcomes_points.push(points);
           spinnerData.outcomes_wedges.push(points);
-          //updateScore(points, activationColor, sectorIdx)
           setTimeout(() => { updateScore(points, activationColor, sectorIdx) }, 500);
         };
       };
@@ -220,10 +225,10 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reward, inte
     drawSector(sectors, sectorIdx, points, activationColor);
     setTimeout(() => {
       scoreMsg.innerHTML = `${score}`
-      isSpinning = (spinnerData.outcomes_points.length >= 12) ? true : false;
+      isSpinning = (spinnerData.outcomes_points.length >= 15) ? true : false;
       drawSector(sectors, null);
       onWheel ? canvas.style.cursor = "grab" : canvas.style.cursor = "";
-      if (!interactive && spinnerData.outcomes_points.length < 12) { setTimeout(startAutoSpin, 1000) };
+      if (!interactive && spinnerData.outcomes_points.length < 15) { setTimeout(startAutoSpin, 1000) };
     }, 1000);
   };
 
