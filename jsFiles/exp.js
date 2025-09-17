@@ -87,7 +87,7 @@ const exp = (function() {
             </div>`,
 
             `<div class='parent'>
-                <p>If you do not win a jackpot, the wedge the wheel landed on will indicate that you earned <strong>0 tokens</strong>:</p>
+                <p>If you don't win a jackpot, the wedge the wheel landed on will show that you earned <strong>0 tokens</strong>:</p>
                 <img src="./img/noBonus.png" style="width:50%; height:50%">
             </div>`,
 
