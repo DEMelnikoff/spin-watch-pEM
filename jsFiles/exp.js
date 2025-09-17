@@ -274,7 +274,7 @@ const exp = (function() {
             return html;
         },
         choices: "NO_KEYS",
-        trial_duration: 5000,
+        trial_duration: 4000,
         response_ends_trial: false,
         data: {wheel_id: jsPsych.timelineVariable('wheel_id'), ev: jsPsych.timelineVariable('ev'), mi: jsPsych.timelineVariable('mi')},
         on_finish: function(data) {
