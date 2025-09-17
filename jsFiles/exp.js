@@ -5,18 +5,7 @@ const exp = (function() {
 
     var p = {};
 
-    let pid = jsPsych.data.getURLVariable("PROLIFIC_PID");
-
-    function hashPID(pid) {
-      let hash = 0;
-      for (let i = 0; i < pid.length; i++) {
-        hash = (hash << 5) - hash + pid.charCodeAt(i);
-        hash = hash & hash; // Convert to 32bit integer
-      }
-      return Math.abs(hash);
-    };
-
-    const condition = hashPID(pid) % 2;
+    const condition = 0;
 
     const play = ["play", "watch"][condition];
 
@@ -72,12 +61,12 @@ const exp = (function() {
             </div>`,
 
             `<div class='parent'>
-                <p>For example, if you land on this wedge, you have a <strong>25%</strong> chance of winning a jackpot.</p>
+                <p>For example, if a wheel lands on this wedge, you have a <strong>25%</strong> chance of winning a jackpot.</p>
                 <img src="./img/p25.png" style="width:50%; height:50%">
             </div>`,
 
             `<div class='parent'>
-                <p>If you land on this wedge, you have a <strong>75%</strong> chance of winning a jackpot.</p>
+                <p>If a wheel lands on this wedge, you have a <strong>75%</strong> chance of winning a jackpot.</p>
                 <img src="./img/p75.png" style="width:50%; height:50%">
             </div>`,
 
@@ -104,8 +93,8 @@ const exp = (function() {
 
             `<div class='parent'>
                 <p>Different wheels have different probabilites.</p>
-                <p>For instance, this wheel gives either a 60% or 40% chance of winning a jackpot.</p>
-                <img src="./img/p60.png" style="width:50%; height:50%">
+                <p>For instance, this wheel always give a 50% chance of winning a jackpot.</p>
+                <img src="./img/p50.png" style="width:50%; height:50%">
             </div>`,
 
             `<div class='parent'>
@@ -174,7 +163,7 @@ const exp = (function() {
         allow_keys: false,
     };
 
-    let correctAnswers = ['100%', '60%', '40%', '0%', `Earn as many tokens as possible.`];
+    let correctAnswers = ['100%', '50%', '0%', `Earn as many tokens as possible.`];
 
     const errorMessage = {
         type: jsPsychInstructions,
@@ -190,28 +179,23 @@ const exp = (function() {
             </div>`,
         questions: [
             {
-                prompt: `If you land on a 100% wedge, what are your chances of winning a jackpot?`, 
+                prompt: `If a wheel lands on a 100% wedge, what are your chances of winning a jackpot?`, 
                 name: `attnChk1`, 
-                options: ['100%', '60%', '40%', '0%'],
+                options: ['100%', '50%', '0%'],
             },
             {
-                prompt: `If you land on a 60% wedge, what are your chances of winning a jackpot?`, 
+                prompt: `If a wheel lands on a 50% wedge, what are your chances of winning a jackpot?`, 
                 name: `attnChk2`, 
-                options: ['100%', '60%', '40%', '0%'],
+                options: ['100%', '50%', '0%'],
             },
             {
-                prompt: `If you land on a 40% wedge, what are your chances of winning a jackpot?`, 
+                prompt: `If a wheel lands on a 0% wedge, what are your chances of winning a jackpot?`, 
                 name: `attnCh3`, 
-                options: ['100%', '60%', '40%', '0%'],
-            },
-            {
-                prompt: `If you land on a 0% wedge, what are your chances of winning a jackpot?`, 
-                name: `attnCh4`, 
-                options: ['100%', '60%', '40%', '0%'],
+                options: ['100%', '50%', '0%'],
             },
             {
                 prompt: `What is your goal?`, 
-                name: `attnChk5`, 
+                name: `attnChk4`, 
                 options: [`Get as many standard outcomes as possible.`, `Get as many random outcomes as possible.`, `Earn as many tokens as possible.`],
             },
         ],
@@ -257,19 +241,22 @@ const exp = (function() {
 
     // define each wedge
     const wedges = {
-        p60:  {color: "#BDBDBD", font: 'white', label:"60%",  prob: .6},
-        p40:  {color: "#737373", font: 'white', label:"40%",  prob: .4},
-        p100: {color: "#BDBDBD", font: 'white', label:"100%", prob: 1},
-        p0:   {color: "#737373", font: 'white', label:"0%",   prob: 0},
+        p50_1:  {color: "#BDBDBD", font: 'white', label:"50%",  prob: .5, nGreenBalls: 2},
+        p50_2:  {color: "#737373", font: 'white', label:"50%",  prob: .5, nGreenBalls: 2},
+        p75:  {color: "#BDBDBD", font: 'white', label:"75%",  prob: .75, nGreenBalls: 3},
+        p25:  {color: "#737373", font: 'white', label:"25%",  prob: .25, nGreenBalls: 1},
+        p100: {color: "#BDBDBD", font: 'white', label:"100%", prob: 1, nGreenBalls: 4},
+        p0:   {color: "#737373", font: 'white', label:"0%",   prob: 0, nGreenBalls: 0},
     };
 
     // define each wheel
     const wheels = [
-
-            {sectors: [ wedges.p60, wedges.p40, wedges.p60, wedges.p40 ], wheel_id: 1, reward: 5,  ev: 2.5, mi: 0, n_aligned: 9},
-            {sectors: [ wedges.p100, wedges.p0, wedges.p100, wedges.p0 ], wheel_id: 2, reward: 5,  ev: 2.5, mi: 1, n_aligned: 15},
-            {sectors: [ wedges.p60, wedges.p40, wedges.p60, wedges.p40 ], wheel_id: 3, reward: 10, ev: 5.0, mi: 0, n_aligned: 9},
-            {sectors: [ wedges.p100, wedges.p0, wedges.p100, wedges.p0 ], wheel_id: 4, reward: 10, ev: 5.0, mi: 1, n_aligned: 15},
+            {sectors: [ wedges.p50_1, wedges.p50_2, wedges.p50_1, wedges.p50_2 ], wheel_id: 1, reward: 5,  ev: 2.5, mi: 0, n_aligned: 6},
+            {sectors: [ wedges.p75, wedges.p25, wedges.p75, wedges.p25 ],         wheel_id: 2, reward: 5,  ev: 2.5, mi: 0.1887219, n_aligned: 9},
+            {sectors: [ wedges.p100, wedges.p0, wedges.p100, wedges.p0 ],         wheel_id: 3, reward: 5,  ev: 2.5, mi: 1, n_aligned: 12},
+            {sectors: [ wedges.p50_1, wedges.p50_2, wedges.p50_1, wedges.p50_2 ], wheel_id: 4, reward: 10, ev: 5.0, mi: 0, n_aligned: 6},
+            {sectors: [ wedges.p75, wedges.p25, wedges.p75, wedges.p25 ],         wheel_id: 5, reward: 10, ev: 5.0, mi: 0.1887219, n_aligned: 9},
+            {sectors: [ wedges.p100, wedges.p0, wedges.p100, wedges.p0 ],         wheel_id: 6, reward: 10, ev: 5.0, mi: 1, n_aligned: 12},
         ];
 
     let scoreTracker = 0; // track current score
@@ -316,7 +303,7 @@ const exp = (function() {
     const flowMeasure = {
         type: jsPsychSurveyLikert,
         questions: [
-            {prompt: `During the last round of Wheel of Fortune,<br>how <b>immersed</b> and <b>engaged</b> did you feel in what you were ${doingOrWatching}?`,
+            {prompt: `Throughout the last round of Wheel of Fortune,<br>how <b>immersed</b> and <b>engaged</b> did you feel in what you were ${doingOrWatching}?`,
             name: `flow`,
             labels: ['0<br>A little', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10<br>Extremely']},
         ],
@@ -440,7 +427,7 @@ const exp = (function() {
     p.save_data = {
         type: jsPsychPipe,
         action: "save",
-        experiment_id: "prcoLEo7Bf8w",
+        experiment_id: "pK8RrDDyi3KK",
         filename: filename,
         data_string: ()=>jsPsych.data.get().csv()
     };

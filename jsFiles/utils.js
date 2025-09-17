@@ -54,7 +54,7 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reward, n_al
   /* get score message */
   const scoreMsg = document.getElementById("score");
 
-  let aligned_array = Array(n_aligned).fill(1).concat(Array(15 - n_aligned).fill(0));
+  let aligned_array = Array(n_aligned).fill(1).concat(Array(12 - n_aligned).fill(0));
   aligned_array = jsPsych.randomization.repeat(aligned_array, 1);
 
   /* get wheel properties */
@@ -206,7 +206,7 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reward, n_al
           let activationColor = points == 0 ? "black" : "green";
           spinnerData.outcomes_points.push(points);
           spinnerData.outcomes_wedges.push(points);
-          setTimeout(() => { updateScore(points, activationColor, sectorIdx) }, 500);
+          updateScore(points, activationColor, sectorIdx);
         };
       };
     };
@@ -223,13 +223,15 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reward, n_al
     let fontWeight = (points == 0) ? 'normal' : 'bolder';
     scoreMsg.innerHTML = `<span style="color:${activationColor}; font-weight: ${fontWeight}">${score}</span>`;
     drawSector(sectors, sectorIdx, points, activationColor);
-    setTimeout(() => {
-      scoreMsg.innerHTML = `${score}`
-      isSpinning = (spinnerData.outcomes_points.length >= 15) ? true : false;
-      drawSector(sectors, null);
-      onWheel ? canvas.style.cursor = "grab" : canvas.style.cursor = "";
-      if (!interactive && spinnerData.outcomes_points.length < 15) { setTimeout(startAutoSpin, 1000) };
-    }, 1000);
+    if (spinnerData.outcomes_points.length < 12) {
+      setTimeout(() => {
+        scoreMsg.innerHTML = `${score}`
+        isSpinning = false;
+        drawSector(sectors, null);
+        onWheel ? canvas.style.cursor = "grab" : canvas.style.cursor = "";
+        if (!interactive && spinnerData.outcomes_points.length < 12) { setTimeout(startAutoSpin, 1000) };
+      }, 1000);
+    };
   };
 
   const getIndex = () => {
