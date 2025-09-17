@@ -93,7 +93,7 @@ const exp = (function() {
 
             `<div class='parent'>
                 <p>Different wheels have different probabilites.</p>
-                <p>For instance, this wheel always give a 50% chance of winning a jackpot.</p>
+                <p>For instance, this wheel always gives a 50% chance of winning a jackpot.</p>
                 <img src="./img/p50.png" style="width:50%; height:50%">
             </div>`,
 
