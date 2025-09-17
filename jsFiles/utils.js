@@ -68,7 +68,7 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reward, n_al
   const arc = (2 * PI) / tot; // arc sizes in radians
 
   /* spin dynamics */
-  const friction = 0.975;  // 0.995=soft, 0.99=mid, 0.98=hard
+  const friction = 0.98;  // 0.995=soft, 0.99=mid, 0.98=hard
   const angVelMin = 5; // Below that number will be treated as a stop
   let angVelMax = 0; // Random ang.vel. to acceletare to 
   let angVel = 0;    // Current angular velocity
@@ -178,7 +178,7 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reward, n_al
       
       // decelerate and stop
       else {
-        let decayRate = Math.log(friction) * 60; // friction < 1, so log is negative
+        let decayRate = Math.log(friction) * 60 * 1.5; // friction < 1, so log is negative
         isAccelerating = false;
         speed *= Math.exp(decayRate * deltaTime); // Exponential decay
         animId = requestAnimationFrame(step);
