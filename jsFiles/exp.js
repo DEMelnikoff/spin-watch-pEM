@@ -82,12 +82,12 @@ const exp = (function() {
             </div>`,
 
             `<div class='parent'>
-                <p>If you win a jackpot, the wedge you landed on will display the jackpot amount, and those tokens will be added to your total:</p>
+                <p>If you win a jackpot, the wedge the wheel landed on will display the jackpot amount, and those tokens will be added to your total:</p>
                 <img src="./img/bonus.png" style="width:50%; height:50%">
             </div>`,
 
             `<div class='parent'>
-                <p>If you do not win a jackpot, the wedge you landed on will indicate that you earned <strong>0 tokens</strong>:</p>
+                <p>If you do not win a jackpot, the wedge the wheel landed on will indicate that you earned <strong>0 tokens</strong>:</p>
                 <img src="./img/noBonus.png" style="width:50%; height:50%">
             </div>`,
 
