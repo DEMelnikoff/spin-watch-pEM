@@ -5,16 +5,18 @@ const exp = (function() {
 
     var p = {};
 
-    const condition = 0;
+    const condition = Math.floor(Math.random() * 2);
 
-    const play = ["play", "watch"][condition];
+    const play = "play";;
 
-    const doingOrWatching = ["doing", "watching"][condition];
+    const feedbackCondition = [true, false][condition];
 
-    const playBool = [true, false][condition];
+    const doingOrWatching = "doing";
+
+    const playBool = true;
 
     jsPsych.data.addProperties({
-        condition: play,
+        condition: feedbackCondition,
     });
 
 
@@ -23,6 +25,8 @@ const exp = (function() {
     *   INSTRUCTIONS
     *
     */
+
+    console.log(feedbackCondition)
 
     const html = {
         welcome_play: [
@@ -285,7 +289,7 @@ const exp = (function() {
     const spin = {
         type: jsPsychCanvasButtonResponse,
         stimulus: function(c, spinnerData) {
-            createSpinner(c, spinnerData, scoreTracker, jsPsych.timelineVariable('sectors'), jsPsych.timelineVariable('reward'), jsPsych.timelineVariable('n_aligned'), playBool);
+            createSpinner(c, spinnerData, scoreTracker, jsPsych.timelineVariable('sectors'), jsPsych.timelineVariable('reward'), jsPsych.timelineVariable('n_aligned'), playBool, feedbackCondition);
         },
         canvas_size: [500, 500],
         score: function() {
@@ -436,6 +440,6 @@ const exp = (function() {
 
 }());
 
-const timeline = [exp.consent, exp.instLoop, exp.postIntro, exp.task, exp.demographics, exp.save_data];
+const timeline = [exp.task, exp.consent, exp.instLoop, exp.postIntro, exp.task, exp.demographics, exp.save_data];
 
 jsPsych.run(timeline);

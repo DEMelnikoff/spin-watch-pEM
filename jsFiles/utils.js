@@ -46,13 +46,10 @@ const getTotalErrors = (data, correctAnswers) => {
     return totalErrors;
 };
 
-const createSpinner = function(canvas, spinnerData, score, sectors, reward, n_aligned, interactive) {
+const createSpinner = function(canvas, spinnerData, score, sectors, reward, n_aligned, interactive, feedback) {
 
   /* get context */
   const ctx = canvas.getContext("2d"); 
-
-  /* get score message */
-  const scoreMsg = document.getElementById("score");
 
   let aligned_array = Array(n_aligned).fill(1).concat(Array(12 - n_aligned).fill(0));
   aligned_array = jsPsych.randomization.repeat(aligned_array, 1);
@@ -203,7 +200,7 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reward, n_al
           let unexpected_outcome = prob > .5 ? 0 : reward;
           let aligned = aligned_array.pop();
           let points = (aligned == 1) ? expected_outcome : unexpected_outcome;
-          let activationColor = points == 0 ? "black" : "green";
+          let activationColor = (points == 0 || !feedback) ? "black" : "green";
           spinnerData.outcomes_points.push(points);
           spinnerData.outcomes_wedges.push(points);
           updateScore(points, activationColor, sectorIdx);
@@ -221,11 +218,9 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reward, n_al
     score += points;
     spinnerData.score = score;
     let fontWeight = (points == 0) ? 'normal' : 'bolder';
-    scoreMsg.innerHTML = `<span style="color:${activationColor}; font-weight: ${fontWeight}">${score}</span>`;
-    drawSector(sectors, sectorIdx, points, activationColor);
+    drawSector(sectors, sectorIdx, points, activationColor, feedback);
     if (spinnerData.outcomes_points.length < 12) {
       setTimeout(() => {
-        scoreMsg.innerHTML = `${score}`
         isSpinning = false;
         drawSector(sectors, null);
         onWheel ? canvas.style.cursor = "grab" : canvas.style.cursor = "";
@@ -249,7 +244,8 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reward, n_al
   }
 
   //* Draw sectors and prizes texts to canvas */
-  const drawSector = (sectors, sector, points, activationColor) => {
+  const drawSector = (sectors, sector, points, activationColor, feedback) => {
+
     for (let i = 0; i < sectors.length; i++) {
       const ang = arc * i;
       ctx.save();
@@ -270,11 +266,13 @@ const createSpinner = function(canvas, spinnerData, score, sectors, reward, n_al
       ctx.textAlign = "center";
       ctx.fillStyle = "#fff";
       if (isSpinning && i == sector) {
-        ctx.font = "bolder 90px sans-serif"
+        let targetText = (feedback) ? `+${points}` : sectors[i].label;
+        let fontSize = (feedback) ? '90px' : '65px';
+        ctx.font = `bolder ${fontSize} sans-serif`;
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 3;
-        ctx.strokeText(`+${points}`, 0, -140);
-        ctx.fillText(`+${points}`, 0, -140);
+        ctx.strokeText(targetText, 0, -140);
+        ctx.fillText(targetText, 0, -140);
       } else {
         ctx.font = "bold 65px sans-serif"
         ctx.strokeStyle = 'black';
