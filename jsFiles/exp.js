@@ -7,7 +7,7 @@ const exp = (function() {
 
     const condition = Math.floor(Math.random() * 2);
 
-    const play = "play";;
+    const play = ["play", "noFeedback"][condition];
 
     const feedbackCondition = [true, false][condition];
 
@@ -29,25 +29,14 @@ const exp = (function() {
     console.log(feedbackCondition)
 
     const html = {
-        welcome_play: [
+        welcome: [
             `<div class='parent'>
                 <p><strong>Welcome to Wheel of Fortune!</strong></p>
                 <p>In Wheel of Fortune, you'll spin a series of prize wheels.</p>
                 <p>With each spin, you'll have a chance of earning tokens.</p>
                 <p>Your goal is to earn as many tokens as possible!</p>
             </div>`,
-        ],
 
-        welcome_watch: [
-            `<div class='parent'>
-                <p><strong>Welcome to Wheel of Fortune!</strong></p>
-                <p>In Wheel of Fortune, you'll observe a series of spinning prize wheels.</p>
-                <p>Each time a prize wheel spins, you'll have a chance of earning tokens.</p>
-                <p>Your goal is to earn as many tokens as possible!</p>
-            </div>`,
-        ],
-
-        how_to_earn: [
             `<div class='parent'>
                 <p>The more tokens you earn, the better your chances of winning a <strong>$100.00 bonus prize</strong>.</p>
                 <p>The tokens you earn will be entered into a lottery, and if one of your tokens is drawn, you'll win $100.00. 
@@ -84,7 +73,9 @@ const exp = (function() {
                 <p>Before each wheel, you'll see how many tokens each jackpot is worth. For example, this message means that for the next wheel, each jackpot is worth <strong>7 tokens</strong>.</p>
                 <img src="./img/nextJackpot.png" style="width:70%; height:70%">      
             </div>`,
+        ],
 
+        feedback_info: [
             `<div class='parent'>
                 <p>If you win a jackpot, the wedge the wheel landed on will display the jackpot amount, and those tokens will be added to your total:</p>
                 <img src="./img/bonus.png" style="width:50%; height:50%">
@@ -93,8 +84,24 @@ const exp = (function() {
             `<div class='parent'>
                 <p>If you don't win a jackpot, the wedge the wheel landed on will show that you earned <strong>0 tokens</strong>:</p>
                 <img src="./img/noBonus.png" style="width:50%; height:50%">
+            </div>`
+        ],
+
+        no_feedback_info: [
+            `<div class='parent'>
+                <p>If you win a jackpot, the tokens you won will be added to your total.</p>
+                <p>If you don't win a jackpot, 0 tokens will be added to your total.</p>
             </div>`,
 
+            `<div class='parent'>
+                <p>You won't see how many tokens you won until the end of the game.</p>
+                <p>After each spin, you'll simply see your probability of having won a jackpot.</p>
+                <p>At the end of the game, your total earnings will be revealed.</p>
+                <img src="./img/prob.png" style="width:50%; height:50%">
+            </div>`
+        ],
+
+        wheel_info: [
             `<div class='parent'>
                 <p>Different wheels have different probabilites.</p>
                 <p>For instance, this wheel always gives a 50% chance of winning a jackpot.</p>
@@ -107,7 +114,7 @@ const exp = (function() {
             </div>`,
         ],
 
-        how_to_spin_play: [
+        how_to_spin: [
             `<div class='parent'>
                 <p>To spin a prize wheel, just grab it with your cursor and give it a spin!
                 <br>Watch the animation below to see how it's done.</p>
@@ -117,25 +124,6 @@ const exp = (function() {
             `<div class='parent'>
                 <p>Throughout Wheel of Fortune, you'll answer questions about your feelings.</p>
                 <p>Specifically, you'll report how <strong>immersed and engaged</strong> you feel while spinning each wheel,
-                as well as how <strong>happy</strong> you currently feel.</p>
-            </div>`,      
-
-            `<div class='parent'>
-                <p>You're ready to start Wheel of Fortune!</p>
-                <p>Continue to the next screen to begin.</p>
-            </div>`,      
-        ],
-
-        how_to_spin_watch: [
-            `<div class='parent'>
-                <p>Each prize wheel spins automatically.
-                <br>Watch the animation below to see an example.</p>
-                <img src="./img/spin-${play}-gif.gif" style="width:60%; height:60%">
-            </div>`,
-
-            `<div class='parent'>
-                <p>Throughout Wheel of Fortune, you'll answer questions about your feelings.</p>
-                <p>Specifically, you'll report how <strong>immersed and engaged</strong> you feel during each round of Wheel of Fortune,
                 as well as how <strong>happy</strong> you currently feel.</p>
             </div>`,      
 
@@ -161,7 +149,7 @@ const exp = (function() {
 
     const intro = {
         type: jsPsychInstructions,
-        pages: [[html.welcome_play, html.welcome_watch][condition], ...html.how_to_earn],
+        pages: [...html.welcome, ...[html.feedback_info, html.no_feedback_info][condition], ...html.wheel_info],
         show_clickable_nav: true,
         post_trial_gap: 500,
         allow_keys: false,
@@ -228,7 +216,7 @@ const exp = (function() {
 
     p.postIntro = {
         type: jsPsychInstructions,
-        pages: [html.how_to_spin_play, html.how_to_spin_watch][condition],
+        pages: html.how_to_spin,
         show_clickable_nav: true,
         post_trial_gap: 500,
         allow_keys: false,
@@ -440,6 +428,6 @@ const exp = (function() {
 
 }());
 
-const timeline = [exp.task, exp.consent, exp.instLoop, exp.postIntro, exp.task, exp.demographics, exp.save_data];
+const timeline = [exp.consent, exp.instLoop, exp.postIntro, exp.task, exp.demographics, exp.save_data];
 
 jsPsych.run(timeline);
