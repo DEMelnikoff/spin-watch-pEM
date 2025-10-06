@@ -26,8 +26,6 @@ const exp = (function() {
     *
     */
 
-    console.log(feedbackCondition)
-
     const html = {
         welcome: [
             `<div class='parent'>
@@ -350,10 +348,15 @@ const exp = (function() {
 
     p.demographics = (function() {
 
-
         const taskComplete = {
             type: jsPsychInstructions,
-            pages: html.postTask,
+            pages: function() {
+                return [`<div class='parent'>
+                            <p>Wheel of Fortune is now complete.</p>
+                            <p>You earned a total of <strong>${scoreTracker} tokens</strong>! You'll find out within 1 week if you won the $100 bonus.</p>
+                            <p>To finish this study, please continue to answer a few final questions.</p>
+                        </div>`]
+            },
             show_clickable_nav: true,
             post_trial_gap: 500,
         };
